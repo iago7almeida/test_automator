@@ -1,0 +1,19 @@
+# Ambiente Virtual
+venv/
+.venv/
+env/
+.env/
+
+# Arquivos de cache do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Arquivos de autenticação e downloads do Playwright
+playwright/.auth/
+test-results/
+playwright-report/
+
+# Arquivos do VS Code
+.vscode/
