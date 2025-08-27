@@ -1,8 +1,8 @@
 # Ambiente Virtual
-venv/
+venv
 .venv/
 env/
-.env/
+.env
 
 # Arquivos de cache do Python
 __pycache__/

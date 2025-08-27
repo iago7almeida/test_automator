@@ -29,7 +29,7 @@ A pasta pages/ contém um arquivo .py para cada página ou componente principal 
 
 A seguir, uma descrição detalhada de cada módulo.
 
-### **1\. base\_page.py**
+### **1\. base\_page.py** 
 
 É a fundação de todos os Page Objects.
 

@@ -1,26 +1,39 @@
-# pages/dashboard_page.py
+from playwright.sync_api import Page, expect
 
-from pages.base_page import BasePage
 
-class DashboardPage(BasePage):
-    # Locators
-    TABLES_MENU_ITEM = '//*[@id="__next"]/div/aside/div[5]' # Menu "Mesas e Comandas"
-    NEW_ORDER_MENU_ITEM = 'div[hoverlabel="Novo pedido"]'
-    CLIENTS_MENU_ITEM = 'div[hoverlabel="Clientes"]'
-    # Adicione outros itens de menu conforme necessário
+class DashboardPage:
 
-    def navigate_to_tables(self):
-        print("Navegando para Mesas e Comandas")
-        self.click(self.TABLES_MENU_ITEM)
-        # Esperar por um elemento específico da página de mesas
-        self.wait_for_selector('section button:has-text("Mesa")') # Exemplo
+    def __init__(self, page: Page):
+        self.page = page
+        
+        self.title = page.locator('h2:text("Dashboard")')
+        self.menu_opened = page.locator('[hoverlabel="Menu"]')
+        self.new_order_button = page.get_by_label("newOrder")
+        self.logout_button = page.get_by_role('button', name='Sair')
 
-    def navigate_to_new_order(self):
-        print("Navegando para Novo Pedido")
-        self.click(self.NEW_ORDER_MENU_ITEM)
-        # Esperar por um elemento da página de novo pedido
+    def login_verification_sucessfull(self):
+        expect(self.title).to_be_visible(timeout=10000)
 
-    def navigate_to_clients(self):
-        print("Navegando para Clientes")
-        self.click(self.CLIENTS_MENU_ITEM)
-        # Esperar por um elemento da página de clientes
+    
+    def handle_payment_modal_if_appears(self):
+
+        close_modal_button = self.page.locator(".ReactModal__Overlay")
+        
+        try:
+            # Espera por até 5 segundos pelo botão do modal
+            expect(close_modal_button).to_be_visible(timeout=7000)
+            print("Modal de pagamento encontrado. Fechando...")
+            close_modal_button.click(position={'x': 10, 'y': 10})
+        except Exception:
+            # Se o botão não aparecer, o expect() lança um TimeoutError,
+            # que é capturado aqui para que o teste prossiga normalmente.
+            print("Modal de pagamento não apareceu. Continuando...")
+
+
+    def logout_system(self):
+        self.menu_opened.click()
+        self.logout_button.click()
+
+
+    def go_to_new_order(self):
+        self.new_order_button.click()

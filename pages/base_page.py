@@ -1,6 +1,6 @@
 # pages/base_page.py
 from playwright.sync_api import Page, TimeoutError as PlaywrightTimeoutError
-import time
+
 
 class BasePage:
     def __init__(self, page: Page):
