@@ -23,6 +23,13 @@ payment_methods_to_test = [
     ("Outros", "Cortesia")
 ]
 
+payment_methods = [
+    "Dinheiro",
+    "Pix",
+    "Débito",
+    "Crédito",
+]
+
 # PEDIDOS NO BALCÃO COM CLIENTE PREVIAMENTE CADASTRADO
 @pytest.mark.parametrize("payment_method", payment_methods_to_test)
 def test_create_order_balcony(page: Page, payment_method: str):
@@ -71,7 +78,7 @@ def test_create_order_balcony(page: Page, payment_method: str):
 
 
 # PEDIDOS PARA RETIRADA COM CLIENTE PREVIAMENTE CADASTRADO
-@pytest.mark.parametrize("payment_method", payment_methods_to_test)
+@pytest.mark.parametrize("payment_method", payment_methods)
 def test_create_order_withdrawal(page: Page, payment_method: str):
 
     login_page = LoginPage(page)
@@ -106,7 +113,7 @@ def test_create_order_withdrawal(page: Page, payment_method: str):
 
 
 # PEDIDOS PARA RETIRADA COM CLIENTE PREVIAMENTE CADASTRADO
-@pytest.mark.parametrize("payment_method", payment_methods_to_test)
+@pytest.mark.parametrize("payment_method", payment_methods)
 def test_create_order_delivery(page: Page, payment_method: str):
 
     login_page = LoginPage(page)

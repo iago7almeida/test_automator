@@ -1,4 +1,5 @@
 from playwright.sync_api import Page, expect
+from time import sleep
 
 
 class PaymentPage:
@@ -39,20 +40,30 @@ class PaymentPage:
         select_sub_method = self.page.locator(f"p[title='{sub_method}']")
         expect(select_sub_method).to_be_visible(timeout=3000)
         select_sub_method.click()
+        sleep (2)
+        
+        
 
     
     def launch_order(self):
         """
         Clica no botão 'Lançar' para registrar o pagamento.
         """
+        sleep(1)
         self.submit_button.click()
+
+        no_payment_message = self.page.get_by_text("Nenhum pagamento adicionado")
+        expect(no_payment_message).to_be_hidden(timeout=15000)
+        print("Botão 'lançar' clicado. Aguardando 'Enviar Pedido' ser habilitado...")
+        expect(self.send_order_button).to_be_enabled(timeout=10000)
+        print("'Eviar pedido' está habilidado. Prosseguindo...")
 
 
     def send_order(self):
         """
         Clica no botão final 'Enviar Pedido' para concluir o fluxo.
         """
-        expect(self.send_order_button).to_be_visible()
+        expect(self.send_order_button).to_be_enabled()
         self.send_order_button.click()
 
 

@@ -9,6 +9,10 @@ class DashboardPage:
         self.title = page.locator('h2:text("Dashboard")')
         self.menu_opened = page.locator('[hoverlabel="Menu"]')
         self.new_order_button = page.get_by_label("newOrder")
+        self.order_sheet_button = page.get_by_label("Gestão de pedidos")
+        self.tables_button = page.get_by_label("Todas as mesas")
+        self.cash_manager_button = page.get_by_label("Gerenciador de caixa")
+        self.clients_button = page.get_by_label("Clientes")
         self.logout_button = page.get_by_role('button', name='Sair')
 
     def login_verification_sucessfull(self):
@@ -37,3 +41,19 @@ class DashboardPage:
 
     def go_to_new_order(self):
         self.new_order_button.click()
+
+
+    def go_to_clients(self):
+        self.clients_button.click()
+
+
+    def go_to_order_sheet(self):
+        self.order_sheet_button.click()
+
+
+    def go_to_tables(self):
+        self.tables_button.click()
+
+
+    def go_to_cache_menager(self):
+        self.cash_manager_button.click()
