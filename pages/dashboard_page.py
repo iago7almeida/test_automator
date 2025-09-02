@@ -10,9 +10,9 @@ class DashboardPage:
         self.menu_opened = page.locator('[hoverlabel="Menu"]')
         self.new_order_button = page.get_by_label("newOrder")
         self.order_sheet_button = page.get_by_label("Gestão de pedidos")
-        self.tables_button = page.get_by_label("Todas as mesas")
+        self.tables_button = page.locator('[hoverlabel="Todas as Mesas"]')
         self.cash_manager_button = page.get_by_label("Gerenciador de caixa")
-        self.clients_button = page.get_by_label("Clientes")
+        self.clients_button = page.locator('[hoverlabel="Clientes"]')
         self.logout_button = page.get_by_role('button', name='Sair')
 
     def login_verification_sucessfull(self):

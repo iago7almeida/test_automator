@@ -2,7 +2,7 @@
 import pytest
 from playwright.sync_api import Page, sync_playwright, Browser
 from pages.login_page import LoginPage
-from .config import USER_EMAIL, USER_PASSWORD # Importa as credenciais do nosso novo arquivo de config
+
 
 @pytest.fixture(scope="session")
 def playwright_instance():

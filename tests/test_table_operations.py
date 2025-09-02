@@ -6,6 +6,10 @@ from pages.login_page import LoginPage
 from pages.dashboard_page import DashboardPage
 from pages.tables_page import TablesPage
 from pages.order_sheet_page import OrderSheetPage
+import os
+import dotenv
+
+dotenv.load_dotenv()  # Carrega variáveis de ambiente do arquivo .env
 
 # @pytest.mark.usefixtures("page") # Não é mais necessário se 'page' for um argumento da fixture
 
@@ -69,3 +73,22 @@ def test_receive_payment(page: Page):
     for i in range(1, 20):
         order_sheet.receive_payment_for_table(i, 1)  # O segundo argumento deve ser definido em caso de o teste exigir ou não emissão 
         time.sleep(1.5)
+
+
+
+def test_merge_tabs(page: Page):
+    
+    login_page = LoginPage(page)    
+    dashboard_page = DashboardPage(page)    
+    tables_page = TablesPage(page)
+
+    username = os.getenv("HOMOLOG_USER")
+    password = os.getenv("HOMOLOG_PASSWORD")
+    login_page.navigate()
+    login_page.login(username, password)
+
+    dashboard_page.login_verification_sucessfull()
+    dashboard_page.handle_payment_modal_if_appears()
+    dashboard_page.go_to_tables()
+
+    tables_page.join_tabs_in_a_table()
