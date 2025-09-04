@@ -66,29 +66,13 @@ def test_receive_payment(page: Page):
     dashboard_page = DashboardPage(page)
     order_sheet = OrderSheetPage(page)
     
-    login_page.navigate_to_login_page()
-    login_page.login("teste_teste@gmail.com", "123")
-    time.sleep(2)
-    dashboard_page.navigate_to_tables()
-    for i in range(1, 20):
-        order_sheet.receive_payment_for_table(i, 1)  # O segundo argumento deve ser definido em caso de o teste exigir ou não emissão 
-        time.sleep(1.5)
-
-
-
-def test_merge_tabs(page: Page):
-    
-    login_page = LoginPage(page)    
-    dashboard_page = DashboardPage(page)    
-    tables_page = TablesPage(page)
-
-    username = os.getenv("HOMOLOG_USER")
-    password = os.getenv("HOMOLOG_PASSWORD")
     login_page.navigate()
-    login_page.login(username, password)
 
-    dashboard_page.login_verification_sucessfull()
-    dashboard_page.handle_payment_modal_if_appears()
+
+def test_merge_tabs(logged_in_page: Page):
+    dashboard_page = DashboardPage(logged_in_page)
+    tables_page = TablesPage(logged_in_page)
+
     dashboard_page.go_to_tables()
 
     tables_page.join_tabs_in_a_table()

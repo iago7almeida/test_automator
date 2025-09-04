@@ -32,22 +32,12 @@ payment_methods = [
 
 # PEDIDOS NO BALCÃO COM CLIENTE PREVIAMENTE CADASTRADO
 @pytest.mark.parametrize("payment_method", payment_methods_to_test)
-def test_create_order_balcony(page: Page, payment_method: str):
+def test_create_order_balcony(logged_in_page: Page, payment_method: str):
 
-    login_page = LoginPage(page)
-    dashboard_page = DashboardPage(page)
-    new_order_page = NewOrderPage(page)
-    payment_page = PaymentPage(page)
+    dashboard_page = DashboardPage(logged_in_page)
+    new_order_page = NewOrderPage(logged_in_page)
+    payment_page = PaymentPage(logged_in_page)
 
-    # --- PRÉ-CONDIÇÃO: FAZER LOGIN ---
-    username = os.getenv("HOMOLOG_USER")
-    password = os.getenv("HOMOLOG_PASSWORD")
-
-    login_page.navigate()
-    login_page.login(username, password)
-
-    dashboard_page.handle_payment_modal_if_appears()
-    dashboard_page.login_verification_sucessfull()
     dashboard_page.go_to_new_order()
 
     new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
