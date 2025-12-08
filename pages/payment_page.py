@@ -1,5 +1,6 @@
-from playwright.sync_api import Page, expect
 from time import sleep
+
+from playwright.sync_api import Page, expect
 
 
 class PaymentPage:
@@ -12,14 +13,12 @@ class PaymentPage:
     """
 
     def __init__(self, page: Page):
-
         self.page = page
 
         # --- Localizadores de Elementos ---
 
-        self.submit_button = page.get_by_role('button', name='Lançar')
-        self.send_order_button = page.get_by_role('button', name='Enviar Pedido')
-
+        self.submit_button = page.get_by_role("button", name="Lançar")
+        self.send_order_button = page.get_by_role("button", name="Enviar Pedido")
 
     def select_payment_method(self, method: str):
         """
@@ -28,10 +27,9 @@ class PaymentPage:
         Args:
             method: O nome exato do método de pagamento (ex: "Dinheiro").
         """
-        payment_button = self.page.get_by_role('button', name=method, exact=True)
+        payment_button = self.page.get_by_role("button", name=method, exact=True)
         expect(payment_button).to_be_visible()
         payment_button.click()
-
 
     def select_other_sub_method(self, sub_method):
         other_sub_method_button = self.page.locator("#paymentMethod")
@@ -40,11 +38,8 @@ class PaymentPage:
         select_sub_method = self.page.locator(f"p[title='{sub_method}']")
         expect(select_sub_method).to_be_visible(timeout=3000)
         select_sub_method.click()
-        sleep (2)
-        
-        
+        sleep(2)
 
-    
     def launch_order(self):
         """
         Clica no botão 'Lançar' para registrar o pagamento.
@@ -58,14 +53,12 @@ class PaymentPage:
         expect(self.send_order_button).to_be_enabled(timeout=10000)
         print("'Eviar pedido' está habilidado. Prosseguindo...")
 
-
     def send_order(self):
         """
         Clica no botão final 'Enviar Pedido' para concluir o fluxo.
         """
         expect(self.send_order_button).to_be_enabled()
         self.send_order_button.click()
-
 
     def handle_fiscal_note_modal_if_appears(self):
         """
@@ -75,8 +68,8 @@ class PaymentPage:
         aparecer em ambientes de teste. Se o modal for encontrado, ela clica
         no botão 'Cancelar' para fechar. Se não, o teste continua sem erro.
         """
-        close_modal_button = self.page.get_by_role('button', name="Cancelar")
-        
+        close_modal_button = self.page.get_by_role("button", name="Cancelar")
+
         try:
             # Espera por até 5 segundos pelo botão do modal
             expect(close_modal_button).to_be_visible(timeout=5000)

@@ -1,17 +1,22 @@
-# tests/test_client_payments.py
 import pytest
 from playwright.sync_api import Page
-import time
-from pages.dashboard_page import DashboardPage
-from pages.client_list_page import ClientListPage
+
 from pages.client_details_page import ClientDetailsPage
+from pages.client_list_page import ClientListPage
+from pages.dashboard_page import DashboardPage
 
 # Dados de teste
 CLIENT_PAYMENT_METHODS = ["Cash", "Pix", "Debit", "Credit"]
 DEFAULT_PAYMENT_AMOUNT = "3550"
 
+
 @pytest.mark.client_payments
 class TestClientPayments:
+    def __init__(self):
+        self.page: Page = None
+        self.dashboard_page = DashboardPage(self.page)
+        self.client_list_page = ClientListPage(self.page)
+        self.client_details_page = ClientDetailsPage(self.page)
 
     @pytest.fixture(autouse=True)
     def setup_test(self, logged_in_page: Page):
@@ -19,16 +24,16 @@ class TestClientPayments:
         Setup que usa a fixture logged_in_page.
         O teste já começa logado e na página do dashboard.
         """
-        self.page = logged_in_page # A página já está logada
+        self.page = logged_in_page  # A página já está logada
         self.dashboard_page = DashboardPage(self.page)
         self.client_list_page = ClientListPage(self.page)
         self.client_details_page = ClientDetailsPage(self.page)
 
         # O login já foi feito pela fixture, então só precisamos navegar para a área de clientes
-        self.dashboard_page.navigate_to_clients()
+        # self.dashboard_page.navigate_to_clients()
         assert self.client_list_page.select_first_client(), "Nenhum cliente encontrado para selecionar."
         # 'yield' não é necessário aqui, pois não há teardown específico
-    
+
     @pytest.mark.parametrize("payment_type", CLIENT_PAYMENT_METHODS)
     def test_receive_client_payment(self, payment_type: str):
         """
