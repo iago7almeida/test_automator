@@ -1,0 +1,14 @@
+[boot]
+systemd=true
+command=service docker start && systemctl start dbus
+memory=2GB
+
+[wsl2]
+processors=4
+swap=8GB
+localhostforwarding=true
+nestedVirtualization=false
+kernelCommandLine = vsyscall=emulate
+
+[automount]
+enabled=true
