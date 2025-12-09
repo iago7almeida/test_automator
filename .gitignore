@@ -1,19 +1,129 @@
-# Ambiente Virtual
-venv/
-.venv/
-env/
-.env/
+# ==============================================================================
+# Git Ignore Configuration
+# ==============================================================================
+# Arquivo padrão para ignorar arquivos desnecessários no versionamento
+# ==============================================================================
 
-# Arquivos de cache do Python
+# ==============================================================================
+# 🔒 SEGURANÇA - Nunca versionar dados sensíveis
+# ==============================================================================
+.env                              # Variáveis de ambiente local
+.env.local                        # Variáveis de ambiente local específico
+.env.*.local                      # Variáveis de ambiente por ambiente
+*.pem                             # Chaves privadas
+*.key                             # Chaves criptográficas
+
+# ==============================================================================
+# 🐍 Python
+# ==============================================================================
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+__pycache__/*
+__pycache__/**
+*.py[cod]                         # Bytecode compilado
+*$py.class                        # Bytecode dinamicamente criado
+*.so                              # Extensões C compiladas
+dist/                             # Distribuição
+build/                            # Build
+*.egg-info/                       # Egg info
+*.eggs/                           # Eggs
+.Python                           # Python
 
-# Arquivos de autenticação e downloads do Playwright
-playwright/.auth/
-test-results/
-playwright-report/
+# ==============================================================================
+# 📦 Virtual Environment
+# ==============================================================================
+venv/                             # Virtual environment padrão
+env/                              # Virtual environment alternativo
+ENV/
+env.bak/
+venv.bak/
+.venv/
 
-# Arquivos do VS Code
-.vscode/
+# ==============================================================================
+# 🧪 Testes & Coverage
+# ==============================================================================
+.pytest_cache/                    # Cache do pytest
+.coverage                         # Arquivo de cobertura
+htmlcov/                          # Relatório HTML de cobertura
+report.html                       # Relatório HTML de testes
+.coverage.*                       # Arquivos de cobertura
+
+# ==============================================================================
+# 📸 Screenshots & Logs
+# ==============================================================================
+tests/screenshots/                # Screenshots de testes (locais)
+logs/                             # Arquivos de log
+*.log                             # Arquivos de log
+debug.log                         # Log de debug
+
+# ==============================================================================
+# 🎭 Playwright
+# ==============================================================================
+playwright/.auth/                 # Playwright auth cache
+test-results/                     # Resultados de teste
+playwright-report/                # Relatório do Playwright
+
+# ==============================================================================
+# 💻 IDE & Editor
+# ==============================================================================
+.vscode/                          # Visual Studio Code
+.idea/                            # JetBrains IDEs
+*.swp                             # Vim
+*.swo                             # Vim
+*~                                # Editor temporário
+.DS_Store                         # macOS
+Thumbs.db                         # Windows
+.project                          # Eclipse
+.pydevproject                     # Eclipse
+*.sublime-project                 # Sublime
+*.sublime-workspace               # Sublime
+
+# ==============================================================================
+# 📝 Editors & Temp Files
+# ==============================================================================
+*.bak                             # Backup
+*.tmp                             # Arquivo temporário
+*.orig                            # Arquivo original
+*.rej                             # Rejeição de patch
+
+# ==============================================================================
+# 🔧 Ferramentas
+# ==============================================================================
+.mypy_cache/                      # Cache do mypy
+.dmypy.json                       # dmypy.json
+dmypy.json                        # dmypy.json
+.pyre/                            # Pyre type checker
+.pylint.d/                        # Pylint cache
+
+# ==============================================================================
+# 📊 Relatórios & Artefatos
+# ==============================================================================
+*.xml                             # JUnit XML (CI/CD)
+reports/                          # Relatórios
+*.csv                             # Dados CSV
+*.xlsx                            # Dados Excel
+*.pdf                             # PDFs
+
+# ==============================================================================
+# 🐳 Docker (se usar)
+# ==============================================================================
+.dockerignore
+docker-compose.override.yml
+
+# ==============================================================================
+# 💾 Arquivos de Banco de Dados
+# ==============================================================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ==============================================================================
+# 📁 Diretórios Específicos do Projeto
+# ==============================================================================
+site-packages/
+
+# ==============================================================================
+# EXCEÇÕES - Arquivos que devem ser versionados mesmo ignorando padrões
+# ==============================================================================
+!.env.example                     # Template deve ser versionado
+!requirements.txt                 # Dependências devem ser versionadas
+!setup.py                         # Setup devem ser versionados

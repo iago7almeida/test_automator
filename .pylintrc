@@ -1,0 +1,29 @@
+[MASTER]
+jobs=2
+
+[MESSAGES CONTROL]
+disable=C0111,C0115,R0903,W0718,E0401,R0902
+
+[REPORTS]
+reports=no
+
+[FORMAT]
+max-line-length=200
+indent-string='    '
+max-module-lines=1000
+
+[DESIGN]
+max-args=10
+max-locals=30
+max-returns=6
+max-branches=12
+max-statements=50
+min-public-methods=0
+max-public-methods=20
+
+[TYPECHECK]
+ignored-modules=
+ignored-classes=
+
+[LOGGING]
+logging-modules=logging
