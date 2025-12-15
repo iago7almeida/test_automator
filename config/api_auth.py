@@ -41,7 +41,7 @@ class APIAuthManager:
             }
         )
 
-    def generate_token(self, username: Optional[str] = None, password: Optional[str] = None) -> Optional[str]:
+    def generate_token_admin(self, username: Optional[str] = None, password: Optional[str] = None) -> Optional[str]:
         """
         Gera um novo token de autenticação.
 
@@ -63,24 +63,31 @@ class APIAuthManager:
 
         if not username or not password:
             logger.error("❌ Credenciais API não configuradas no .env")
+            logger.debug(
+                "API_USERNAME present: %s | API_PASSWORD present: %s",
+                bool(self.config.API_USERNAME),
+                bool(self.config.API_PASSWORD),
+            )
             return None
 
-        auth_url = f"{self.config.API_ADMIN_BASE}{self.config.API_AUTH_ENDPOINT}"
+        auth_url = f"{self.config.API_ADMIN_BASE}"
         payload = {"username": username, "password": password}
 
         try:
             logger.info("🔐 Gerando novo token para: %s", username)
+            logger.debug("Auth URL: %s | Payload: %s", auth_url, payload)
             response = self.session.post(auth_url, json=payload, timeout=10)
             response.raise_for_status()
 
             data = response.json()
             self.token = data.get("token") or data.get("access_token") or data.get("data", {}).get("token")
 
+            logger.debug("Auth response status: %s | body: %s", getattr(response, "status_code", None), data)
+
             if not self.token:
                 logger.error("❌ Token não encontrado na resposta: %s", data)
                 return None
 
-            # Calcular expiração (JWT típico expira em 24h, usar 23h por segurança)
             self.token_expiry = datetime.now() + timedelta(hours=23)
 
             logger.info("✅ Token gerado com sucesso")
@@ -99,29 +106,12 @@ class APIAuthManager:
             logger.error("❌ Erro ao gerar token: %s", str(e))
             return None
 
-    def get_valid_token(self, force_refresh: bool = False) -> Optional[str]:
-        """
-        Retorna um token válido, gerando um novo se necessário.
+    def get_valid_token(self) -> Optional[str]:
+        return self.generate_token_admin()
 
-        Args:
-            force_refresh: Força geração de novo token mesmo que o atual seja válido
-
-        Returns:
-            str: Token válido
-            None: Se não conseguir gerar token
-
-        Example:
-            >>> auth = APIAuthManager()
-            >>> token = auth.get_valid_token()
-            >>> # Se token expirou, gera automaticamente um novo
-        """
-        # Se força refresh ou não tem token ou token expirou
-        if force_refresh or not self.token or (self.token_expiry and datetime.now() >= self.token_expiry):
-            logger.info("🔄 Token inválido ou expirado, gerando novo...")
-            return self.generate_token()
-
-        logger.debug("✅ Token ainda válido")
-        return self.token
+    # Backwards-compatible wrapper
+    def generate_token(self, username: Optional[str] = None, password: Optional[str] = None) -> Optional[str]:
+        return self.generate_token_admin(username=username, password=password)
 
     def get_auth_headers(self, token: Optional[str] = None) -> Dict[str, str]:
         """
@@ -162,7 +152,7 @@ class APIAuthManager:
         session.headers.update(self.get_auth_headers())
         return session
 
-    def make_authenticated_request(self, method: str, url: str, force_new_token: bool = False, **kwargs) -> Optional[requests.Response]:
+    def make_authenticated_request(self, method: str, url: str, **kwargs) -> Optional[requests.Response]:
         """
         Faz uma requisição autenticada, gerando novo token se necessário.
 
@@ -185,7 +175,7 @@ class APIAuthManager:
             >>> if response:
             ...     users = response.json().get('users', [])
         """
-        token = self.get_valid_token(force_refresh=force_new_token)
+        token = self.get_valid_token()
 
         if not token:
             logger.error("❌ Não conseguiu obter token para autenticação")
@@ -206,7 +196,7 @@ class APIAuthManager:
             return None
         except requests.exceptions.HTTPError as e:
             # Se 401 (Unauthorized), tenta com novo token
-            if e.response.status_code == 401 and not force_new_token:
+            if e.response.status_code == 401:
                 logger.warning("⚠️ Token expirado, tentando com novo token...")
                 return self.make_authenticated_request(method, url, force_new_token=True, **kwargs)
 

@@ -45,23 +45,6 @@ from config.settings import get_config
 config = get_config()  # Retorna HMLConfig ou ProdConfig
 ```
 
-### `pages/` - Page Object Model
-```
-pages/
-├── __init__.py
-├── base_page.py                   # Classe base (comum a todas)
-├── login_page.py                  # Login
-├── client_list_page.py            # Listagem de clientes
-├── client_details_page.py         # Detalhes do cliente
-├── new_order_page.py              # Criar pedido
-├── order_sheet_page.py            # Folha de pedido
-├── payment_page.py                # Pagamentos
-├── tables_page.py                 # Tabelas
-├── dashboard_page.py              # Dashboard
-├── modal_handler.py               # Modais
-└── blo.py                         # APIs de teste
-```
-
 **Pattern - Page Object:**
 ```python
 from playwright.sync_api import Page

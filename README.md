@@ -34,6 +34,7 @@ Toda documentação está em `docs/`:
 | [02-configuration.md](docs/02-configuration.md) | Configuração centralizada (HML/PROD) |
 | [03-project-structure.md](docs/03-project-structure.md) | Estrutura do projeto |
 | [04-best-practices.md](docs/04-best-practices.md) | Boas práticas |
+| [07-test-architecture.md](docs/07-test-architecture.md) | Estrutura de testes (backend/frontend/mobile) |
 
 **👉 Comece por:** [`docs/00-venv-setup.md`](docs/00-venv-setup.md)
 

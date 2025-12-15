@@ -1,18 +1,16 @@
-# tests/test_single_orders.py
-import os
-
 import pytest
-from dotenv import load_dotenv
 from playwright.sync_api import Page
 
+from config.settings import get_config
 from data.data import Customers, Products
-from pages.dashboard_page import DashboardPage
-from pages.login_page import LoginPage
-from pages.new_order_page import NewOrderPage
-from pages.payment_page import PaymentPage
+from models.web.dashboard_page import DashboardPage
+from models.web.login_page import LoginPage
+from models.web.new_order_page import NewOrderPage
+from models.web.payment_page import PaymentPage
 
-load_dotenv()
-# Define uma lista de métodos de pagamento a ser usada para parametrizar o teste.
+cfg = get_config()
+
+
 payment_methods_to_test = [
     "Dinheiro",
     "Pix",
@@ -32,7 +30,7 @@ payment_methods = [
 ]
 
 
-# PEDIDOS NO BALCÃO COM CLIENTE PREVIAMENTE CADASTRADO
+@pytest.mark.frontend
 @pytest.mark.parametrize("payment_method", payment_methods_to_test)
 def test_create_order_balcony(logged_in_page: Page, payment_method: str):
     dashboard_page = DashboardPage(logged_in_page)
@@ -68,32 +66,28 @@ def test_create_order_balcony(logged_in_page: Page, payment_method: str):
     dashboard_page.login_verification_sucessfull()
 
 
-# PEDIDOS PARA RETIRADA COM CLIENTE PREVIAMENTE CADASTRADO
+@pytest.mark.frontend
 @pytest.mark.parametrize("payment_method", payment_methods)
 def test_create_order_withdrawal(page: Page, payment_method: str):
-    login_page = LoginPage(page)
     dashboard_page = DashboardPage(page)
     new_order_page = NewOrderPage(page)
     payment_page = PaymentPage(page)
 
-    # --- PRÉ-CONDIÇÃO: FAZER LOGIN ---
-    username = os.getenv("HOMOLOG_USER")
-    password = os.getenv("HOMOLOG_PASSWORD")
-
+    # Use shared login fixture to ensure a consistent, clean logged-in state
+    # when the test asks for `page` we do a manual login to preserve compatibility
+    login_page = LoginPage(page)
     login_page.navigate()
-    login_page.login(username, password)
+    login_page.login(cfg.USERNAME, cfg.PASSWORD)
 
     dashboard_page.handle_payment_modal_if_appears()
     dashboard_page.login_verification_sucessfull()
     dashboard_page.go_to_new_order()
 
-    # Seleciona o tipo do pedido, o cliente e o produto
     new_order_page.select_order_type_withdrawal()
     new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
     new_order_page.add_product_to_order(Products.COCA_COLA)
     new_order_page.proceed_to_payment()
 
-    # Seleciona o método de pagamento e procede para confirmar o pedido
     payment_page.select_payment_method(payment_method)
     payment_page.send_order()
     payment_page.handle_fiscal_note_modal_if_appears()
@@ -101,7 +95,7 @@ def test_create_order_withdrawal(page: Page, payment_method: str):
     dashboard_page.login_verification_sucessfull()
 
 
-# PEDIDOS PARA RETIRADA COM CLIENTE PREVIAMENTE CADASTRADO
+@pytest.mark.frontend
 @pytest.mark.parametrize("payment_method", payment_methods)
 def test_create_order_delivery(page: Page, payment_method: str):
     login_page = LoginPage(page)
@@ -109,26 +103,20 @@ def test_create_order_delivery(page: Page, payment_method: str):
     new_order_page = NewOrderPage(page)
     payment_page = PaymentPage(page)
 
-    # --- PRÉ-CONDIÇÃO: FAZER LOGIN ---
-    username = os.getenv("HOMOLOG_USER")
-    password = os.getenv("HOMOLOG_PASSWORD")
-
     login_page.navigate()
-    login_page.login(username, password)
+    login_page.login(cfg.USERNAME, cfg.PASSWORD)
 
     dashboard_page.handle_payment_modal_if_appears()
     dashboard_page.login_verification_sucessfull()
     dashboard_page.go_to_new_order()
 
-    # Seleciona o tipo do pedido, o cliente e o produto
     new_order_page.select_order_type_delivery()
     new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
     new_order_page.add_product_to_order(Products.COCA_COLA)
     new_order_page.proceed_to_payment()
 
-    # Seleciona o método de pagamento e procede para confirmar o pedido
     payment_page.select_payment_method(payment_method)
     payment_page.send_order()
     payment_page.handle_fiscal_note_modal_if_appears()
 
-    dashboard_page.login_verification_sucessfull()  # Verifica se a pagina foi redirecionada com sucesso confirmando o pedido
+    dashboard_page.login_verification_sucessfull()
