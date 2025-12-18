@@ -7,9 +7,10 @@
 # ==============================================================================
 # 🔒 SEGURANÇA - Nunca versionar dados sensíveis
 # ==============================================================================
-.env                              # Variáveis de ambiente local
+.env
 .env.local                        # Variáveis de ambiente local específico
 .env.*.local                      # Variáveis de ambiente por ambiente
+**/.env                      # Variáveis de ambiente em pastas de ambiente
 *.pem                             # Chaves privadas
 *.key                             # Chaves criptográficas
 
@@ -51,6 +52,8 @@ report.html                       # Relatório HTML de testes
 # 📸 Screenshots & Logs
 # ==============================================================================
 tests/screenshots/                # Screenshots de testes (locais)
+**/screenshots/*
+**/screenshots/
 logs/                             # Arquivos de log
 *.log                             # Arquivos de log
 debug.log                         # Log de debug

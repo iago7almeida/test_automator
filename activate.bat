@@ -34,8 +34,7 @@ echo Proximos passos:
 echo   1. pip install -r requirements.txt
 echo   2. playwright install
 echo   3. pre-commit install
-echo   4. python validate_config.py
-echo   5. pytest -v
+echo   4. pytest -v
 echo.
 
 endlocal
