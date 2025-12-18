@@ -6,12 +6,20 @@
 # ==============================================================================
 
 import os
+import pathlib
 from enum import Enum
 
 from dotenv import load_dotenv
 
 # Carregar variáveis de ambiente
-load_dotenv()
+# Prefer env file under envs/hml/.env if present (pytest may not load env_files option).
+root = pathlib.Path(__file__).resolve().parents[1]
+default_env = root / "envs" / "hml" / ".env"
+if default_env.exists():
+    load_dotenv(default_env)
+else:
+    # fallback: load .env at project root if present
+    load_dotenv()
 
 
 class Environment(Enum):
@@ -22,7 +30,6 @@ class Environment(Enum):
 
 
 class BaseConfig:
-    API_AUTH_ENDPOINT = os.getenv("API_AUTH_ENDPOINT", "/auth/login")
     API_USERNAME = os.getenv("API_USERNAME", "")
     API_PASSWORD = os.getenv("API_PASSWORD", "")
 
@@ -34,12 +41,11 @@ class BaseConfig:
 
     # Endpoints específicos
     API_USERS_ENDPOINT = "/partner/users"
-    API_AUTH_ENDPOINT = "/auth/login"
     API_ORDERS_ENDPOINT = "/orders"
 
     # Credenciais Web
-    USERNAME = os.getenv("USER", "")
-    PASSWORD = os.getenv("PASSWORD", "")
+    USERNAME = os.getenv("USER_WEB", "")
+    PASSWORD = os.getenv("PASSWORD_WEB", "")
 
     # Credenciais API
     API_USERNAME = os.getenv("API_USER", "")

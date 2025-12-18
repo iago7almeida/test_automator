@@ -2,7 +2,9 @@
 # Login Page - Page Object Model
 # ==============================================================================
 
+import datetime
 import logging
+from pathlib import Path
 
 from playwright.sync_api import Page
 
@@ -76,6 +78,18 @@ class LoginPage:
             # Aguardar navegação pós-login
             self.page.wait_for_load_state("networkidle")
             logger.info("Credenciais enviadas com sucesso")
+            logger.debug("Post-login URL: %s", self.page.url)
+
+            # Log any visible login error message
+            err = self.get_error_message()
+            if err:
+                ts = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+                logger.error("Login error message detected: %s; taking screenshot", err)
+                try:
+                    Path("tests/screenshots").mkdir(parents=True, exist_ok=True)
+                    self.page.screenshot(path=f"tests/screenshots/login_error_{ts}.png")
+                except Exception:
+                    logger.exception("Failed to write screenshot for login error")
 
         except TimeoutError as e:
             logger.error("Timeout ao preencher formulário de login: %s", e)

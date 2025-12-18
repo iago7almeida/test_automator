@@ -33,13 +33,11 @@ class TablesPage:
         self.confirm_page_table.wait_for(state="visible", timeout=10000)
         print("Sessão de mesas confirmada.")
 
-    # Abre uma comanda em uma mesa vazia sem por o nome do cliente
     def open_tab_in_a_empty_table(self):
         self.get_empty_table_button.click()
         self.button_open_tab.click()
         print("Comanda aberta com sucesso.")
 
-    # Abre uma nova comanda em uma mesa ativa
     def open_tab_in_a_active_table(self):
         expect(self.get_active_table_button).to_be_visible(timeout=10000)
         self.get_active_table_button.click()
@@ -49,13 +47,11 @@ class TablesPage:
         self.save_button.click()
         print("Nova comanda aberta com sucesso.")
 
-    # Seleciona a categoria desejada
     def select_category(self, category_name: str):
         category_buttton = self.page.get_by_role("button", name=category_name)
         expect(category_buttton).to_be_visible(timeout=10000)
         category_buttton.click()
 
-    # Seleciona o produto desejado
     def select_product(self, product_name: str):
         product_button = self.page.get_by_role("button", name=product_name)
         expect(product_button).to_be_visible(timeout=10000)
