@@ -40,7 +40,7 @@ def test_create_order_balcony(logged_in_page: Page, payment_method: str):
     dashboard_page.go_to_new_order()
 
     new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
-    new_order_page.add_product_to_order(Products.COCA_COLA)
+    new_order_page.add_product_to_order(Products.TAMBAQUI)
     new_order_page.proceed_to_payment()
 
     if isinstance(payment_method, tuple):
@@ -85,7 +85,7 @@ def test_create_order_withdrawal(page: Page, payment_method: str):
 
     new_order_page.select_order_type_withdrawal()
     new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
-    new_order_page.add_product_to_order(Products.COCA_COLA)
+    new_order_page.add_product_to_order(Products.TAMBAQUI)
     new_order_page.proceed_to_payment()
 
     payment_page.select_payment_method(payment_method)
@@ -112,10 +112,12 @@ def test_create_order_delivery(page: Page, payment_method: str):
 
     new_order_page.select_order_type_delivery()
     new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
-    new_order_page.add_product_to_order(Products.COCA_COLA)
+    new_order_page.add_product_to_order(Products.TAMBAQUI)
     new_order_page.proceed_to_payment()
-
+    #--------------------
+    payment_page.handle_delivery_fee()
     payment_page.select_payment_method(payment_method)
+
     payment_page.send_order()
     payment_page.handle_fiscal_note_modal_if_appears()
 

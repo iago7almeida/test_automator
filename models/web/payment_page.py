@@ -38,6 +38,15 @@ class PaymentPage:
         expect(self.send_order_button).to_be_enabled()
         self.send_order_button.click()
 
+    def handle_delivery_fee(self):
+        insertion_fee_button = self.page.get_by_role("button", name="Adicionar taxa")
+        try:
+            expect(insertion_fee_button).to_be_visible(timeout=5000)
+            insertion_fee_button.click()
+        
+        except Exception:
+            print("Modal não apareceu ou foi comprometido")
+
     def handle_fiscal_note_modal_if_appears(self):
         close_modal_button = self.page.get_by_role("button", name="Cancelar")
 

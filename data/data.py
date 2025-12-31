@@ -1,6 +1,7 @@
 class Products:
     COCA_COLA = "Coca cola"
     COCA_COLA_LATA = "Coca-cola lata"
+    TAMBAQUI = "Tambaqui"
 
 
 class Customers:
@@ -23,4 +24,4 @@ class Categories:
     CHOPP = "Chopp"
     DOCES = "Doces"
     PORCOES = "Porções"
-    TESTE = "Teste"
+    TESTE = "TesteE"

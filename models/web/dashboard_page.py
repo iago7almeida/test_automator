@@ -14,7 +14,7 @@ class DashboardPage:
         self.title = page.locator('h2:text("Dashboard")')
         self.menu_opened = page.locator('[hoverlabel="Menu"]')
         self.new_order_button = page.get_by_label("newOrder")
-        self.order_sheet_button = page.get_by_label("Gestão de pedidos")
+        self.order_sheet_button = page.locator('[hoverlabel="Gestão de pedidos"]')
         self.tables_button = page.locator('[hoverlabel="Todas as Mesas"]')
         self.cash_manager_button = page.get_by_label("Gerenciador de caixa")
         self.clients_button = page.locator('[hoverlabel="Clientes"]')
@@ -62,16 +62,23 @@ class DashboardPage:
         self.logout_button.click()
 
     def go_to_new_order(self):
+        self.handle_payment_modal_if_appears()
         self.new_order_button.click()
+
 
     def go_to_clients(self):
         self.clients_button.click()
 
     def go_to_order_sheet(self):
+        self.handle_payment_modal_if_appears()        
         self.order_sheet_button.click()
 
     def go_to_tables(self):
+        self.handle_payment_modal_if_appears()
         self.tables_button.click()
 
     def go_to_cache_menager(self):
         self.cash_manager_button.click()
+
+    def go_to_order_manegement(self):
+        self.order_sheet_button
