@@ -32,7 +32,7 @@ build/                            # Build
 # ==============================================================================
 # 📦 Virtual Environment
 # ==============================================================================
-venv/                             # Virtual environment padrão
+venv/*                             # Virtual environment padrão
 env/                              # Virtual environment alternativo
 ENV/
 env.bak/
@@ -130,3 +130,4 @@ site-packages/
 !.env.example                     # Template deve ser versionado
 !requirements.txt                 # Dependências devem ser versionadas
 !setup.py                         # Setup devem ser versionados
+
