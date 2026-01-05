@@ -17,17 +17,11 @@ class OrderManagementPage(BasePage):
         return self.page.locator("text=Não pago").count()
 
     def open_first_unpaid_order(self):
-        """
-        Encontra o primeiro pedido 'Não pago', captura o ID e clica.
-        Retorna o ID do pedido (str) ou None se não achar nada.
-        """
-        # Filtra as linhas que têm o texto "Não pago"
+
         unpaid_row = self.order_rows.filter(has_text="Não pago").first
         
         if unpaid_row.is_visible():
-            # Tenta capturar o ID (geralmente é o número de 6 dígitos)
             row_text = unpaid_row.inner_text()
-            # Regex simples para pegar o primeiro numero grande (ID)
             match = re.search(r'\d{6}', row_text) 
             order_id = match.group() if match else "ID_DESCONHECIDO"
             
@@ -40,14 +34,7 @@ class OrderManagementPage(BasePage):
         return None
 
     def verify_order_is_paid(self, order_id: str):
-        """
-        Verifica se o pedido específico agora está com status 'Recebido'.
-        """
-        # Localiza a linha pelo ID
         row = self.order_rows.filter(has_text=order_id)
-        
-        # Procura EXATAMENTE o botão/badge visível, ignorando tooltips escondidos
-        # Usamos filter visível para não pegar o texto de ajuda do rodapé
         status_recebido = row.get_by_text("Recebido").filter(has=self.page.locator("visible=true"))
         
         expect(status_recebido).to_be_visible()

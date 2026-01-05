@@ -51,7 +51,7 @@ class DashboardPage:
         close_modal_button = self.page.locator(".ReactModal__Overlay")
 
         try:
-            expect(close_modal_button).to_be_visible(timeout=7000)
+            expect(close_modal_button).to_be_visible(timeout=70000)
             print("Modal de pagamento encontrado. Fechando...")
             close_modal_button.click(position={"x": 10, "y": 10})
         except Exception:

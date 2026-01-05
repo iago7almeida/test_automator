@@ -10,7 +10,6 @@ from models.web.order_sheet_page import OrderSheetPage
 from models.web.tables_page import TablesPage
 
 
-
 @pytest.mark.frontend
 def test_create_orders_on_multiple_tables(logged_in_page):
     dashboard = DashboardPage(logged_in_page)
@@ -24,12 +23,9 @@ def test_create_orders_on_multiple_tables(logged_in_page):
 
 
 @pytest.mark.frontend
-def test_cancel_order_on_table_1(page: Page):
-    login_page = LoginPage(page)
-    order_sheet = OrderSheetPage(page)
-
-    login_page.navigate_to_login_page()
-    login_page.login("teste_teste@gmail.com", "123")
+def test_cancel_order_on_table_1(logged_in_page):
+    dashboard = DashboardPage(logged_in_page)
+    order_sheet = OrderSheetPage(logged_in_page)
 
     time.sleep(2)
     order_sheet.cancel_order_sheet(1)
@@ -50,12 +46,12 @@ def test_transfer_order_sheets(page: Page):
 
 
 @pytest.mark.frontend
-def test_receive_payment(page: Page):
-    login_page = LoginPage(page)
-    _ = DashboardPage(page)
-    _ = OrderSheetPage(page)
-
-    login_page.navigate()
+def test_receive_payment(logged_in_page):
+    dashboard = DashboardPage(logged_in_page)
+    order_sheet = OrderSheetPage(logged_in_page)
+    time.sleep(2)
+    dashboard.go_to_tables()
+    order_sheet.pay_table(2)
 
 
 @pytest.mark.frontend
