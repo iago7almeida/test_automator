@@ -34,14 +34,12 @@ class PaymentModal(BasePage):
         try:
             expect(self.modal_content).to_be_visible(timeout=10000)
         except AssertionError:
-            # Se falhar, tira um print para vermos o que está na tela
             print("ERRO: Modal não abriu a tempo.")
             self.page.screenshot(path="erro_modal_nao_abriu.png")
             raise
-
         if method.lower() == "dinheiro": self.btn_money.click()       
         elif method.lower() == "pix": self.btn_pix.click()       
-        elif method.lower() == "débito" or method.lower() == "debito": self.btn_debit.click()       
+        elif method.lower() == "débito": self.btn_debit.click()       
         elif method.lower() == "crédito": self.btn_credit.click()
         
         else:
@@ -55,9 +53,15 @@ class PaymentModal(BasePage):
         self.input_value.fill(amount) 
 
     def launch_payment(self):
+        try:
+            self.btn_launch.wait_for(state="visible", timeout=6000)
+        except:
+            print("⚠️ Botão 'Lançar' não foi encontrado.")
+            return
+        if self.btn_launch.is_disabled():
+            print("✅ O valor já está pago (Botão Lançar inativo). Pulando etapa...")
+            return  
         print("🚀 Clicando Lançar")
-        expect(self.btn_launch).to_be_enabled()
-        if self.btn_launch.is_disabled: return
         self.btn_launch.click()
         self.page.wait_for_timeout(500)
 

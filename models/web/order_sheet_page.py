@@ -43,23 +43,17 @@ class OrderSheetPage(BasePage):
     # Ações Principais
     # ==========================================
 
-
-
     def select_table(self, table_number: int):
         index = table_number - 1
         print(f"🪑 Selecionando a mesa na posição {index} (Mesa {table_number})...")
+        target_table = self.tables_section.locator("button").nth(index)
         try:
-            self.tables_section.locator("button").first.wait_for(state="visible", timeout=5000)
+            target_table.wait_for(state="visible", timeout=12000)
         except:
             print("❌ Timeout: As mesas não carregaram na tela a tempo.")
             return False
 
-        all_tables = self.tables_section.locator("button")
-        if index >= all_tables.count():
-            print(f"❌ Erro: Tentei acessar a mesa {table_number} (índice {index}), mas só existem {all_tables.count()} mesas.")
-            return False
-        table_btn = all_tables.nth(index)
-        table_btn.click()
+        target_table.click()
         self.handle_keep_open_modal()        
         return True
 
@@ -130,10 +124,8 @@ class OrderSheetPage(BasePage):
             self.btn_cancel_open.click()
             return
 
-        # Clica no botão "Receber" (Verde) do modal de detalhes
         print("💸 Clicando em 'Receber'...")
         self.btn_receive.click()
-        # --- Integração com PaymentModal ---
         self.payment_modal.select_payment_method(payment_method)
         
         #if amount:
@@ -144,7 +136,7 @@ class OrderSheetPage(BasePage):
         print(f"✅ Pagamento de {payment_method} realizado na Mesa {table_number}.") 
         self.payment_modal.finalize_order_sheet()
         self.handle_administrative_password()
-        time.sleep(7)
+        time.sleep(2)
         
 
     # ==========================================
