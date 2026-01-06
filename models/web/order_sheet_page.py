@@ -20,8 +20,14 @@ class OrderSheetPage(BasePage):
         self.input_main_identifier = self.modal_open_order.get_by_placeholder("Número ou nome da comanda")
         self.input_customer_name = self.modal_open_order.get_by_placeholder("Nome do cliente")
         self.btn_confirm_open = self.modal_open_order.get_by_role("button", name="Abrir comanda")
+        self.btn_cancel_open = self.modal_open_order.get_by_role("button", name="Cancelar")
         
-        # --- Modal 2: Mesa Ocupada (Ações) --- 
+        # --- Modal: Senha administrativa
+        self.modal_password = page.locator("div[role='dialog']").filter(has_text="Digite a senha administrativa")
+        self.input_password = self.modal_password.locator("input[name=\"password\"]")
+        self.btn_confirm_password = self.modal_password.get_by_role("button", name="Confirmar")
+
+        # --- Modal 3: Mesa Ocupada (Ações) --- 
         self.modal_table_details = page.locator('div[class="sc-fa3a0b24-2 bAbjMs"]')
         # Botões de ação principais
         self.btn_new_item = self.modal_table_details.locator("button", has_text="Novo")      # Botão Laranja
@@ -37,10 +43,26 @@ class OrderSheetPage(BasePage):
     # Ações Principais
     # ==========================================
 
+
+
     def select_table(self, table_number: int):
-        print(f"🪑 Clicando na Mesa {table_number}...")
-        self.page.locator("button").filter(has_text=str(table_number)).first.click()
-        self.handle_keep_open_modal() 
+        index = table_number - 1
+        print(f"🪑 Selecionando a mesa na posição {index} (Mesa {table_number})...")
+        try:
+            self.tables_section.locator("button").first.wait_for(state="visible", timeout=5000)
+        except:
+            print("❌ Timeout: As mesas não carregaram na tela a tempo.")
+            return False
+
+        all_tables = self.tables_section.locator("button")
+        if index >= all_tables.count():
+            print(f"❌ Erro: Tentei acessar a mesa {table_number} (índice {index}), mas só existem {all_tables.count()} mesas.")
+            return False
+        table_btn = all_tables.nth(index)
+        table_btn.click()
+        self.handle_keep_open_modal()        
+        return True
+
 
     def handle_table_opening_if_needed(self, customer_name="Cliente Teste"):
         try:
@@ -50,6 +72,18 @@ class OrderSheetPage(BasePage):
                 
                 self.input_customer_name.fill(customer_name)
                 self.btn_confirm_open.click()
+                self.page.wait_for_timeout(1000)
+                return True
+        except:
+            pass
+        return False
+    
+    def handle_administrative_password(self):
+        try:
+            if self.modal_password.is_visible(timeout=2000):
+                print("Necessário inserir senha administrativa")
+                self.input_password.fill("12345")
+                self.btn_confirm_password.click()
                 self.page.wait_for_timeout(1000)
                 return True
         except:
@@ -91,10 +125,9 @@ class OrderSheetPage(BasePage):
     def pay_table(self, table_number: int, payment_method: str = "Débito", amount: str = None):
         self.select_table(table_number)
         
-        # Garante que não é mesa vazia (não dá pra pagar mesa vazia)
         if self.modal_open_order.is_visible():
             print("⚠️ A mesa está vazia! Não há nada para pagar.")
-            self.page.keyboard.press("Escape") # Fecha o modal de abrir
+            self.btn_cancel_open.click()
             return
 
         # Clica no botão "Receber" (Verde) do modal de detalhes
@@ -106,12 +139,13 @@ class OrderSheetPage(BasePage):
         #if amount:
         #    self.payment_modal.fill_amount(amount)
          
-        self.payment_modal.launch_payment()
-        print("Aqui") 
-        time.sleep(2) 
+        self.payment_modal.launch_payment() 
+        time.sleep(2)
+        print(f"✅ Pagamento de {payment_method} realizado na Mesa {table_number}.") 
         self.payment_modal.finalize_order_sheet()
+        self.handle_administrative_password()
+        time.sleep(7)
         
-        print(f"✅ Pagamento de {payment_method} realizado na Mesa {table_number}.")
 
     # ==========================================
     # Utilitários
@@ -125,3 +159,4 @@ class OrderSheetPage(BasePage):
                 btn.click()
         except:
             pass
+

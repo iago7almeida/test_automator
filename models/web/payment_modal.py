@@ -57,12 +57,11 @@ class PaymentModal(BasePage):
     def launch_payment(self):
         print("🚀 Clicando Lançar")
         expect(self.btn_launch).to_be_enabled()
+        if self.btn_launch.is_disabled: return
         self.btn_launch.click()
-        # Pequena espera para animação do lançamento
         self.page.wait_for_timeout(500)
 
     def get_remaining_amount(self) -> str:
-        # Adicionei um wait aqui, pois às vezes o cálculo demora uns milissegundos
         self.missing_amount_text.wait_for()
         return self.missing_amount_text.inner_text().replace("Falta pagar", "").replace("\xa0", " ").strip()
 

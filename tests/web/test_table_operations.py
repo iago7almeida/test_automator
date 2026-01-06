@@ -51,7 +51,9 @@ def test_receive_payment(logged_in_page):
     order_sheet = OrderSheetPage(logged_in_page)
     time.sleep(2)
     dashboard.go_to_tables()
-    order_sheet.pay_table(2)
+    for i in range(1,12):
+        order_sheet.pay_table(i)
+        time.sleep(2)
 
 
 @pytest.mark.frontend

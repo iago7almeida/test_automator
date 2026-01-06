@@ -43,6 +43,7 @@ class NewOrderPage:
     def add_product_to_order(self, product_name: str):
         self.search_product_input.fill(product_name)
         product_result = self.page.get_by_role("button").filter(has_text=product_name)
+        product_result.wait_for(state="visible", timeout=10000)
         expect(product_result).to_be_visible()
         product_result.click()
 
