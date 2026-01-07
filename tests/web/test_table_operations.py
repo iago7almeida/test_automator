@@ -33,26 +33,12 @@ def test_cancel_order_on_table_1(logged_in_page):
 
 
 @pytest.mark.frontend
-def test_transfer_order_sheets(page: Page):
-    login_page = LoginPage(page)
-    _ = DashboardPage(page)
-    order_sheet = OrderSheetPage(page)
-
-    login_page.navigate_to_login_page()
-    login_page.login("teste_teste@gmail.com", "123")
-    for _ in range(1, 10):
-        order_sheet.transfer_order_sheet(2)
-        time.sleep(2)
-
-
-@pytest.mark.frontend
-def test_receive_payment(logged_in_page):
+def test_transfer_order_sheets(logged_in_page):
     dashboard = DashboardPage(logged_in_page)
     order_sheet = OrderSheetPage(logged_in_page)
-    time.sleep(2)
     dashboard.go_to_tables()
-    for i in range(1,12):
-        order_sheet.pay_table(i)
+    for i in range(1, 10):
+        order_sheet.transfer_order_sheet(i, i+1)
         time.sleep(2)
 
 
@@ -64,3 +50,14 @@ def test_merge_tabs(logged_in_page: Page):
     dashboard_page.go_to_tables()
 
     tables_page.join_tabs_in_a_table()
+
+
+@pytest.mark.frontend
+def test_receive_payment(logged_in_page):
+    dashboard = DashboardPage(logged_in_page)
+    order_sheet = OrderSheetPage(logged_in_page)
+    time.sleep(2)
+    dashboard.go_to_tables()
+    for i in range(1,12):
+        order_sheet.pay_table(i)
+        time.sleep(2)

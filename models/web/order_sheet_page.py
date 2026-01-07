@@ -34,6 +34,14 @@ class OrderSheetPage(BasePage):
         self.btn_receive = self.modal_table_details.get_by_role("button", name="Receber")     # Botão Verde
         self.btn_transfer = self.modal_table_details.get_by_role("button", name="Transferir") # Botão Branco
         self.btn_cancel_sheet = self.modal_table_details.get_by_role("button", name="Cancelar") # Botão Cancelar
+        # transeferêcia de itens
+        self.modal_transfer_itens = page.locator("div[role='dialog']").filter(has_text="Transferir")
+        self.checkbox_select_all = self.modal_transfer_itens.get_by_text("Selecionar todos os itens")
+        self.btn_next_transfer = self.modal_transfer_itens.get_by_role("button", name="Próximo")
+        self.btn_cancel_transfer = self.modal_transfer_itens.get_by_role("button", name="Cancelar")
+        self.btn_input_transfer = self.modal_transfer_itens.locator('input[placeholder="Busque por Comanda ou local"]')
+        self.order_sheets_destiny = self.modal_transfer_itens.locator(".sc-a1e5d594-8")
+        self.btn_confirm_transfer_final = self.modal_transfer_itens.get_by_role("button", name="Aplicar")
         
         # --- Tela de Adição de Itens (Categorias e Produtos) ---
         self.btn_confirm_items = page.locator('button[buttontype="confirm"]')
@@ -95,14 +103,11 @@ class OrderSheetPage(BasePage):
             pass
         return False
 
-
     def add_item_to_table(self, table_number: int, category_index=0, product_index=0):
         self.select_table(table_number)
         
         # Se a mesa estiver vazia, abre ela primeiro
         self.handle_table_opening_if_needed()
-        
-        # Agora deve estar no modal de detalhes (Mesa Ocupada). Clicamos em "Novo".
         self.is_order_sheet_opened()
         
         # --- Seleção de Produtos ---
@@ -115,6 +120,58 @@ class OrderSheetPage(BasePage):
         self.btn_confirm_items.click()
         print("✅ Item adicionado com sucesso.")
         self.page.wait_for_timeout(1000)
+
+    def select_transfer_destination(self, destination_index: int):
+        print(f"📍 Buscando destino de transferência na posição {destination_index}...")
+        destinations = self.order_sheets_destiny.locator("> div")
+        try:
+            destinations.first.wait_for(state="visible", timeout=10000)
+        except:
+            print("❌ Timeout: A lista de destinos não carregou.")
+            return False
+        count = destinations.count()
+        if destination_index >= count:
+            print(f"❌ Erro: Tentou selecionar índice {destination_index}, mas só existem {count} destinos disponíveis.")
+            return False
+        target = destinations.nth(destination_index)
+
+        try:
+            local_name = target.locator("p").first.inner_text()
+            print(f"✅ Selecionando destino: {local_name}")
+        except:
+            print("✅ Selecionando destino...")
+
+        target.click()
+        return True
+
+
+    def transfer_order_sheet(self, table_number: int, destination_index: int = 0):
+        if not self.select_table(table_number):
+            return
+        if self.modal_open_order.is_visible():
+            print("⚠️ A mesa está vazia! Não há nada para transferir.")
+            self.btn_cancel_open.click()
+            return
+        print("arrows_counter_clockwise Clicando em 'Transferir'...")
+        self.btn_transfer.click()
+        self.modal_transfer_itens.wait_for(state="visible", timeout=3000)
+        self.checkbox_select_all.click()
+        self.page.wait_for_timeout(500)           
+        print("➡️ Clicando em 'Próximo'...")
+        self.btn_next_transfer.click()
+        self.btn_input_transfer.fill("0")
+        if not self.select_transfer_destination(destination_index):
+            return 
+        print("🚀 Confirmando transferência...")
+        self.btn_confirm_transfer_final.click()
+        self.handle_administrative_password()
+        self.page.wait_for_timeout(2000)
+        print("✅ Transferência concluída.")
+
+
+
+
+
 
     def pay_table(self, table_number: int, payment_method: str = "Débito", amount: str = None):
         self.select_table(table_number)
