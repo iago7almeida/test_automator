@@ -30,8 +30,10 @@ class TablesPage:
         self.receive_payment_button = page.get_by_role("button", name="Receber")
         self.send_payment_button = page.get_by_role("button", name="Lançar")
         self.ended_tab_button = page.get_by_role("button", name="Finalizar comanda")
+        self.alert_select_areas = page.get_by_role("alert").filter(has_text="Selecione uma área!")
 
         self.areas_grid = self.page.locator('svg[aria-label="info-icon"]')
+        self.btn_action_geral = self.page.get_by_text("Ações", exact=True)
         self.btn_actions = self.page.get_by_text("Ações").locator("..")
         self.btn_join_tabs = self.page.get_by_text("Juntar Comandas")
         self.modal_confirm_join = page.locator("div[role='dialog']").filter(has_text="Confirmar junção?")
@@ -103,11 +105,19 @@ class TablesPage:
         return self.join_modal.locator('div[class*="ToToF"]')
 
     def join_tabs_in_a_table(self):
-        print("Iniciando o processo de juntar comandas...")
-        self.select_area(1)       
-        self.btn_actions.click()
+        print("Iniciando o processo de juntar comandas...")               
+        self.btn_action_geral.click()
         self.btn_join_tabs.click()
-        
+        self.page.wait_for_timeout(1000)
+        if self.alert_select_areas.is_visible():
+            print("⚠️ Alerta 'Selecione uma área' detectado. Corrigindo...")
+            self.select_area(1)
+            self.btn_actions.click()
+            self.btn_join_tabs.click()
+        else:
+            print("ℹ️ Nenhum alerta de área detectado. Prosseguindo...")
+        print("Aguardando modal de junção abrir...")
+        self.join_modal.wait_for(state="visible", timeout=10000)    
         self.input_orderSheet = self.join_modal.locator('input[placeholder="Busque um local/comanda"]')
         self.input_orderSheet.fill("0")
         try:
