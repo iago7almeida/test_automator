@@ -43,6 +43,7 @@ class OrderSheetPage(BasePage):
         self.order_sheets_destiny = self.modal_transfer_itens.locator(".sc-a1e5d594-8")
         self.btn_confirm_transfer_final = self.modal_transfer_itens.get_by_role("button", name="Aplicar")
         
+
         # --- Tela de Adição de Itens (Categorias e Produtos) ---
         self.btn_confirm_items = page.locator('button[buttontype="confirm"]')
 
@@ -120,6 +121,8 @@ class OrderSheetPage(BasePage):
         self.btn_confirm_items.click()
         print("✅ Item adicionado com sucesso.")
         self.page.wait_for_timeout(1000)
+
+
 
     def select_transfer_destination(self, destination_index: int):
         print(f"📍 Buscando destino de transferência na posição {destination_index}...")
