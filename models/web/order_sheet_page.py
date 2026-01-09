@@ -1,3 +1,4 @@
+import re
 import time
 from playwright.sync_api import Page, expect
 from models.web.base_page import BasePage
@@ -42,6 +43,10 @@ class OrderSheetPage(BasePage):
         self.btn_input_transfer = self.modal_transfer_itens.locator('input[placeholder="Busque por Comanda ou local"]')
         self.order_sheets_destiny = self.modal_transfer_itens.locator(".sc-a1e5d594-8")
         self.btn_confirm_transfer_final = self.modal_transfer_itens.get_by_role("button", name="Aplicar")
+        self.btn_back_transfer = self.modal_transfer_itens.get_by_role("button", name="Voltar")
+        self.modal_atentention = page.get_by_role("dialog").filter(has_text="Atenção!")
+        self.btn_back_without_transfer = self.modal_atentention.get_by_role("button", name="Sim, sair sem transferir")
+        self.alert_error_transfer = page.get_by_role("alert").filter(has_text="Erro ao transferir items")
         
 
         # --- Tela de Adição de Itens (Categorias e Produtos) ---
@@ -155,7 +160,7 @@ class OrderSheetPage(BasePage):
             print("⚠️ A mesa está vazia! Não há nada para transferir.")
             self.btn_cancel_open.click()
             return
-        print("arrows_counter_clockwise Clicando em 'Transferir'...")
+        print("Clicando em 'Transferir'...")
         self.btn_transfer.click()
         self.modal_transfer_itens.wait_for(state="visible", timeout=3000)
         self.checkbox_select_all.click()
@@ -168,11 +173,20 @@ class OrderSheetPage(BasePage):
         print("🚀 Confirmando transferência...")
         self.btn_confirm_transfer_final.click()
         self.handle_administrative_password()
-        self.page.wait_for_timeout(2000)
+        try:
+            print("⏳ Verificando se houve erro na transferência...")
+            self.alert_error_transfer.wait_for(state="visible", timeout=5000)
+            print("🚨 Erro ao transferir itens detectado!")
+            self.btn_back_transfer.click()           
+            self.btn_cancel_transfer.click()
+            self.btn_back_without_transfer.wait_for(state="visible", timeout=3000)
+            self.btn_back_without_transfer.click()
+            self.page.get_by_role("button").filter(has_text=re.compile(r"^$")).nth(1).click()    
+            return
+        except Exception:
+            print("✅ Nenhum erro detectado. Prosseguindo.")
+        self.page.wait_for_timeout(500) 
         print("✅ Transferência concluída.")
-
-
-
 
 
 
