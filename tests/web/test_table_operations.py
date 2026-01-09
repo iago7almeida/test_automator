@@ -1,5 +1,4 @@
 import time
-
 import pytest
 from playwright.sync_api import Page
 
@@ -23,12 +22,11 @@ def test_create_orders_on_multiple_tables(logged_in_page):
 
 
 @pytest.mark.frontend
-def test_cancel_order_on_table_1(logged_in_page):
+def test_cancel_order_sheet(logged_in_page):
     dashboard = DashboardPage(logged_in_page)
     order_sheet = OrderSheetPage(logged_in_page)
-
-    time.sleep(2)
-    order_sheet.cancel_order_sheet(1)
+    dashboard.go_to_tables()
+    order_sheet.cancel_order_sheet(5, "")
     time.sleep(2)
 
 

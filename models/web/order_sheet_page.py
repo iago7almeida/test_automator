@@ -1,4 +1,5 @@
 import re
+import random
 import time
 from playwright.sync_api import Page, expect
 from models.web.base_page import BasePage
@@ -47,8 +48,9 @@ class OrderSheetPage(BasePage):
         self.modal_atentention = page.get_by_role("dialog").filter(has_text="Atenção!")
         self.btn_back_without_transfer = self.modal_atentention.get_by_role("button", name="Sim, sair sem transferir")
         self.alert_error_transfer = page.get_by_role("alert").filter(has_text="Erro ao transferir items")
-        
-
+        # Cancelar Comanda
+        self.modal_cancel_sheet = page.get_by_role("dialog").filter(has_text="Cancelar Comanda")
+        self.btn_confirm_cancel = self.modal_cancel_sheet.get_by_role("button", name="Confirmar")
         # --- Tela de Adição de Itens (Categorias e Produtos) ---
         self.btn_confirm_items = page.locator('button[buttontype="confirm"]')
 
@@ -189,10 +191,46 @@ class OrderSheetPage(BasePage):
         print("✅ Transferência concluída.")
 
 
+    def cancel_order_sheet(self, table_number: int, reason_text: str = None):
+        print(f"Iniciando cancelamento da mesa {table_number}...")
+        self.select_table(table_number)
+        if self.modal_open_order.is_visible():
+            print("⚠️ A mesa está vazia! Não há nada para pagar.")
+            self.btn_cancel_open.click()
+            return
+        self.btn_cancel_sheet.click()
+        self.modal_cancel_sheet.wait_for(state="visible", timeout=5000)
+        options = [
+            "Desistência",
+            "Saiu sem pagar",
+            "Insatisfação com o atendimento",
+            "Insatisfação com o produto"
+        ]
+
+        if reason_text:
+            target_reason = reason_text
+            print(f"🎯 Motivo selecionado manualmente: {target_reason}")
+        else:
+            target_reason = random.choice(options)
+            print(f"🎲 Motivo selecionado aleatoriamente: {target_reason}")
+        btn_reason = self.modal_cancel_sheet.locator("button").filter(has_text=target_reason).first
+        btn_reason.wait_for(state="visible", timeout=5000)
+        btn_reason.click()
+        print(f"✅ Botão '{target_reason}' clicado com sucesso.")
+        
+        input_pass = self.modal_cancel_sheet.locator('input[type="password"]')
+        if input_pass.is_visible():
+            print("🔑 Inserindo senha administrativa...")
+            input_pass.fill("12345")
+        self.btn_confirm_cancel.click()
+        print("✅ Cancelamento confirmado.")
+        
+        self.page.wait_for_timeout(1000)
+        
+
 
     def pay_table(self, table_number: int, payment_method: str = "Débito", amount: str = None):
-        self.select_table(table_number)
-        
+        self.select_table(table_number)        
         if self.modal_open_order.is_visible():
             print("⚠️ A mesa está vazia! Não há nada para pagar.")
             self.btn_cancel_open.click()
