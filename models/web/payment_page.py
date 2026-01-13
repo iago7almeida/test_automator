@@ -13,7 +13,9 @@ class PaymentPage:
     def select_payment_method(self, method: str):
         payment_button = self.page.get_by_role("button", name=method, exact=True)
         expect(payment_button).to_be_visible()
+        print("antes de clicar select_payment")
         payment_button.click()
+        print("Concluí payment_method")
 
     def select_other_sub_method(self, sub_method):
         other_sub_method_button = self.page.locator("#paymentMethod")
@@ -35,6 +37,7 @@ class PaymentPage:
         print("'Eviar pedido' está habilidado. Prosseguindo...")
 
     def send_order(self):
+        print("Cheguei aqui em send_order")
         expect(self.send_order_button).to_be_enabled()
         self.send_order_button.click()
 

@@ -17,6 +17,10 @@ class NewOrderPage:
         self.submit_payment_button = page.get_by_role("button", name="Lançar")
         self.customer_search_input = page.get_by_role("complementary").get_by_role("textbox").first
 
+        self.asside_side = page.locator("aside", has_text="Balcão")
+        self.withdrawal = self.asside_side.get_by_role("span", name="Retirada")
+
+
     def navigate(self):
         url = f"{self.config.BASE_URL}/createSingleOrder"
         logger.info("📍 Navegando para: %s", url)
@@ -26,17 +30,20 @@ class NewOrderPage:
         pass
 
     def select_order_type_withdrawal(self):
-        self.page.get_by_text("Retirada").click()
+        self.page.get_by_text("Retirada", exact=True).click()
 
     def select_order_type_delivery(self):
-        self.page.get_by_text("Delivery").click()
+        self.page.get_by_text("Delivery", exact=True).click()
 
     def search_and_select_customer(self, customer_name: str):
         self.customer_search_input.click()
         self.customer_search_input.fill(customer_name)
-        customer_result = self.page.locator("div.sc-cfd510a4-8.fNDSsg").filter(has_text=customer_name)
+        customer_result = self.asside_side.locator("div")\
+            .filter(has_text=customer_name)\
+            .filter(has_text="Saldo")\
+            .last
         self.customer_search_input.click()
-        expect(customer_result).to_be_visible(timeout=6000)
+        expect(customer_result).to_be_visible(timeout=60000)
         customer_result.hover()
         customer_result.click()
 
@@ -45,6 +52,7 @@ class NewOrderPage:
         product_result = self.page.get_by_role("button").filter(has_text=product_name)
         product_result.wait_for(state="visible", timeout=10000)
         expect(product_result).to_be_visible()
+        print("Aqui")
         product_result.click()
 
     def proceed_to_payment(self):

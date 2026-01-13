@@ -10,8 +10,7 @@ from models.web.payment_page import PaymentPage
 
 cfg = get_config()
 
-
-payment_methods_to_test = [
+payment_methods_to_test_balcony = [
     "Dinheiro",
     "Pix",
     "Débito",
@@ -22,103 +21,96 @@ payment_methods_to_test = [
     ("Outros", "Cortesia"),
 ]
 
-payment_methods = [
+payment_methods_simple = [
     "Dinheiro",
     "Pix",
     "Débito",
     "Crédito",
 ]
 
-
 @pytest.mark.frontend
-@pytest.mark.parametrize("payment_method", payment_methods_to_test)
-def test_create_order_balcony(logged_in_page: Page, payment_method: str):
+def test_create_order_balcony(logged_in_page: Page):
     dashboard_page = DashboardPage(logged_in_page)
     new_order_page = NewOrderPage(logged_in_page)
     payment_page = PaymentPage(logged_in_page)
 
-    dashboard_page.go_to_new_order()
+    for payment_method in payment_methods_to_test_balcony:
+        print(f"🔄 Testando pagamento: {payment_method}")
+        
+        dashboard_page.go_to_new_order()
+        new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
+        new_order_page.add_product_to_order(Products.TAMBAQUI)
+        new_order_page.proceed_to_payment()
 
-    new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
-    new_order_page.add_product_to_order(Products.TAMBAQUI)
-    new_order_page.proceed_to_payment()
+        if isinstance(payment_method, tuple):
+            main_method, sub_method = payment_method
+            payment_page.select_payment_method(main_method)
+            payment_page.select_other_sub_method(sub_method)
+            payment_page.launch_order()
+            payment_page.send_order()
+            payment_page.handle_fiscal_note_modal_if_appears()
 
-    if isinstance(payment_method, tuple):
-        main_method, sub_method = payment_method
-        payment_page.select_payment_method(main_method)
-        payment_page.select_other_sub_method(sub_method)
-        payment_page.launch_order()
-        payment_page.send_order()
-        payment_page.handle_fiscal_note_modal_if_appears()
+        elif payment_method == "Fiado":
+            payment_page.select_payment_method(payment_method)
+            payment_page.launch_order()
+            payment_page.send_order()
+            payment_page.handle_fiscal_note_modal_if_appears()
 
-    elif payment_method == "Fiado":
-        payment_page.select_payment_method(payment_method)
-        payment_page.launch_order()
-        payment_page.send_order()
-        payment_page.handle_fiscal_note_modal_if_appears()
+        else:
+            payment_page.select_payment_method(payment_method)
+            payment_page.launch_order()
+            payment_page.send_order()
+            payment_page.handle_fiscal_note_modal_if_appears()
 
-    else:
-        payment_page.select_payment_method(payment_method)
-        payment_page.launch_order()
-        payment_page.send_order()
-        payment_page.handle_fiscal_note_modal_if_appears()
-
-    dashboard_page.login_verification_sucessfull()
-
-
-@pytest.mark.frontend
-@pytest.mark.parametrize("payment_method", payment_methods)
-def test_create_order_withdrawal(page: Page, payment_method: str):
-    dashboard_page = DashboardPage(page)
-    new_order_page = NewOrderPage(page)
-    payment_page = PaymentPage(page)
-
-    # Use shared login fixture to ensure a consistent, clean logged-in state
-    # when the test asks for `page` we do a manual login to preserve compatibility
-    login_page = LoginPage(page)
-    login_page.navigate()
-    login_page.login(cfg.USERNAME, cfg.PASSWORD)
-
-    dashboard_page.handle_payment_modal_if_appears()
-    dashboard_page.login_verification_sucessfull()
-    dashboard_page.go_to_new_order()
-
-    new_order_page.select_order_type_withdrawal()
-    new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
-    new_order_page.add_product_to_order(Products.TAMBAQUI)
-    new_order_page.proceed_to_payment()
-
-    payment_page.select_payment_method(payment_method)
-    payment_page.send_order()
-    payment_page.handle_fiscal_note_modal_if_appears()
-
-    dashboard_page.login_verification_sucessfull()
+        dashboard_page.login_verification_sucessfull()
+        print(f"✅ Pagamento {payment_method} concluído com sucesso.\n")
 
 
 @pytest.mark.frontend
-@pytest.mark.parametrize("payment_method", payment_methods)
-def test_create_order_delivery(page: Page, payment_method: str):
-    login_page = LoginPage(page)
-    dashboard_page = DashboardPage(page)
-    new_order_page = NewOrderPage(page)
-    payment_page = PaymentPage(page)
+def test_create_order_withdrawal(logged_in_page: Page):
+    dashboard_page = DashboardPage(logged_in_page)
+    new_order_page = NewOrderPage(logged_in_page)
+    payment_page = PaymentPage(logged_in_page)
 
-    login_page.navigate()
-    login_page.login(cfg.USERNAME, cfg.PASSWORD)
+    for payment_method in payment_methods_simple:
+        print(f"🔄 Testando Retirada com: {payment_method}")
+        
+        dashboard_page.go_to_new_order()
+        new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
+        new_order_page.select_order_type_withdrawal()  
+        new_order_page.add_product_to_order(Products.TAMBAQUI)
+        new_order_page.proceed_to_payment()
 
-    dashboard_page.handle_payment_modal_if_appears()
-    dashboard_page.login_verification_sucessfull()
-    dashboard_page.go_to_new_order()
+        payment_page.select_payment_method(payment_method)
+        payment_page.send_order()
+        payment_page.handle_fiscal_note_modal_if_appears()
 
-    new_order_page.select_order_type_delivery()
-    new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
-    new_order_page.add_product_to_order(Products.TAMBAQUI)
-    new_order_page.proceed_to_payment()
-    #--------------------
-    payment_page.handle_delivery_fee()
-    payment_page.select_payment_method(payment_method)
+        dashboard_page.login_verification_sucessfull()
+        print(f"✅ Retirada com {payment_method} finalizada.\n")
 
-    payment_page.send_order()
-    payment_page.handle_fiscal_note_modal_if_appears()
 
-    dashboard_page.login_verification_sucessfull()
+@pytest.mark.frontend
+def test_create_order_delivery(logged_in_page: Page):
+    dashboard_page = DashboardPage(logged_in_page)
+    new_order_page = NewOrderPage(logged_in_page)
+    payment_page = PaymentPage(logged_in_page)
+
+    for payment_method in payment_methods_simple:
+        print(f"🔄 Testando Delivery com: {payment_method}")
+
+        dashboard_page.go_to_new_order()
+
+        new_order_page.select_order_type_delivery()
+        new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
+        new_order_page.add_product_to_order(Products.TAMBAQUI)
+        new_order_page.proceed_to_payment()
+        
+        payment_page.handle_delivery_fee()
+        payment_page.select_payment_method(payment_method)
+
+        payment_page.send_order()
+        payment_page.handle_fiscal_note_modal_if_appears()
+
+        # Garante que voltou para o Dashboard para o próximo item do loop
+        dashboard_page.login_verification_sucessfull()
+        print(f"✅ Delivery com {payment_method} finalizado.\n")
