@@ -32,12 +32,9 @@ class PaymentPage:
 
         no_payment_message = self.page.get_by_text("Nenhum pagamento adicionado")
         expect(no_payment_message).to_be_hidden(timeout=15000)
-        print("Botão 'lançar' clicado. Aguardando 'Enviar Pedido' ser habilitado...")
         expect(self.send_order_button).to_be_enabled(timeout=10000)
-        print("'Eviar pedido' está habilidado. Prosseguindo...")
 
     def send_order(self):
-        print("Cheguei aqui em send_order")
         expect(self.send_order_button).to_be_enabled()
         self.send_order_button.click()
 

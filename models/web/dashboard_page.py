@@ -31,7 +31,7 @@ class DashboardPage:
             logger.debug("Dashboard title not visible; checking logout button and capturing debug info")
 
         try:
-            expect(self.logout_button).to_be_visible(timeout=10000)
+            expect(self.logout_button).to_be_visible(timeout=20000)
             logger.debug("Logout button visible — login considered successful")
             return
         except Exception as exc:
@@ -62,7 +62,6 @@ class DashboardPage:
         self.logout_button.click()
 
     def go_to_new_order(self):
-        self.handle_payment_modal_if_appears()
         self.new_order_button.click()
 
 

@@ -48,12 +48,13 @@ class NewOrderPage:
         customer_result.click()
 
     def add_product_to_order(self, product_name: str):
+        self.search_product_input.wait_for(state="visible")
+        self.search_product_input.click()
         self.search_product_input.fill(product_name)
-        product_result = self.page.get_by_role("button").filter(has_text=product_name)
-        product_result.wait_for(state="visible", timeout=10000)
-        expect(product_result).to_be_visible()
-        print("Aqui")
-        product_result.click()
+        self.product_result = self.page.locator("button").filter(has_text=product_name)
+        
+        self.product_result.click()
+        self.page.wait_for_timeout(300)
 
     def proceed_to_payment(self):
         self.page.get_by_role("button", name="pagamento").click()

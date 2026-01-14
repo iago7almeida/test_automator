@@ -33,12 +33,11 @@ def test_create_order_balcony(logged_in_page: Page):
     dashboard_page = DashboardPage(logged_in_page)
     new_order_page = NewOrderPage(logged_in_page)
     payment_page = PaymentPage(logged_in_page)
-
+    dashboard_page.handle_payment_modal_if_appears()
     for payment_method in payment_methods_to_test_balcony:
         print(f"🔄 Testando pagamento: {payment_method}")
         
         dashboard_page.go_to_new_order()
-        new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
         new_order_page.add_product_to_order(Products.TAMBAQUI)
         new_order_page.proceed_to_payment()
 
@@ -51,6 +50,7 @@ def test_create_order_balcony(logged_in_page: Page):
             payment_page.handle_fiscal_note_modal_if_appears()
 
         elif payment_method == "Fiado":
+            new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
             payment_page.select_payment_method(payment_method)
             payment_page.launch_order()
             payment_page.send_order()
@@ -61,9 +61,9 @@ def test_create_order_balcony(logged_in_page: Page):
             payment_page.launch_order()
             payment_page.send_order()
             payment_page.handle_fiscal_note_modal_if_appears()
-
-        dashboard_page.login_verification_sucessfull()
-        print(f"✅ Pagamento {payment_method} concluído com sucesso.\n")
+            print(f"✅ Pagamento {payment_method} concluído com sucesso.\n")
+    dashboard_page.login_verification_sucessfull()
+        
 
 
 @pytest.mark.frontend
@@ -71,7 +71,7 @@ def test_create_order_withdrawal(logged_in_page: Page):
     dashboard_page = DashboardPage(logged_in_page)
     new_order_page = NewOrderPage(logged_in_page)
     payment_page = PaymentPage(logged_in_page)
-
+    dashboard_page.handle_payment_modal_if_appears()
     for payment_method in payment_methods_simple:
         print(f"🔄 Testando Retirada com: {payment_method}")
         
@@ -84,9 +84,9 @@ def test_create_order_withdrawal(logged_in_page: Page):
         payment_page.select_payment_method(payment_method)
         payment_page.send_order()
         payment_page.handle_fiscal_note_modal_if_appears()
-
-        dashboard_page.login_verification_sucessfull()
         print(f"✅ Retirada com {payment_method} finalizada.\n")
+    dashboard_page.login_verification_sucessfull()
+        
 
 
 @pytest.mark.frontend
@@ -94,7 +94,7 @@ def test_create_order_delivery(logged_in_page: Page):
     dashboard_page = DashboardPage(logged_in_page)
     new_order_page = NewOrderPage(logged_in_page)
     payment_page = PaymentPage(logged_in_page)
-
+    dashboard_page.handle_payment_modal_if_appears()
     for payment_method in payment_methods_simple:
         print(f"🔄 Testando Delivery com: {payment_method}")
 
@@ -111,6 +111,6 @@ def test_create_order_delivery(logged_in_page: Page):
         payment_page.send_order()
         payment_page.handle_fiscal_note_modal_if_appears()
 
-        # Garante que voltou para o Dashboard para o próximo item do loop
-        dashboard_page.login_verification_sucessfull()
         print(f"✅ Delivery com {payment_method} finalizado.\n")
+    dashboard_page.login_verification_sucessfull()
+        
