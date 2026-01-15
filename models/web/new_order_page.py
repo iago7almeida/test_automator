@@ -15,10 +15,9 @@ class NewOrderPage:
         self.search_product_input = page.get_by_placeholder("Busque por produto")
         self.payments_buttons = page.get_by_role("button", name="Pagamentos")
         self.submit_payment_button = page.get_by_role("button", name="Lançar")
-        self.customer_search_input = page.get_by_role("complementary").get_by_role("textbox").first
+        self.customer_search_input = self.page.locator("label").filter(has_text="Nome do cliente").locator("..").locator("input").first
 
         self.asside_side = page.locator("aside", has_text="Balcão")
-        self.withdrawal = self.asside_side.get_by_role("span", name="Retirada")
 
 
     def navigate(self):
@@ -31,6 +30,8 @@ class NewOrderPage:
 
     def select_order_type_withdrawal(self):
         self.page.get_by_text("Retirada", exact=True).click()
+        
+
 
     def select_order_type_delivery(self):
         self.page.get_by_text("Delivery", exact=True).click()

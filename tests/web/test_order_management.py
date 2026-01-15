@@ -21,16 +21,12 @@ def test_split_payment_pix_and_cash(logged_in_page):
     
     # 1. Pix (Parcial)
     payment_modal.select_payment_method("Pix")
-    # Tente passar exatamente como você faria manualmente. 
-    # Se o campo já tem R$, mande só o numero.
     payment_modal.fill_amount("0,10") 
     payment_modal.launch_payment()
     
     # Validação rápida
     remaining = payment_modal.get_remaining_amount()
     assert "R$ 0,00" not in remaining, f"Erro: Zerou cedo demais! Restante: {remaining}"
-    
-    # 2. Dinheiro (Restante)
     payment_modal.select_payment_method("Dinheiro")
     payment_modal.launch_payment()
     
@@ -61,11 +57,8 @@ def test_add_remove_payment_logic(logged_in_page):
     if not order_id:
         pytest.skip("Sem pedidos pendentes.")
 
-    # 1. Lança pagamento total (Dinheiro)
     payment_modal.select_payment_method("Dinheiro")
     payment_modal.launch_payment()
-
-    # Verifica se zerou a falta
     assert "R$ 0,00" in payment_modal.get_remaining_amount()
 
     # 2. Ops, errei! Vou remover.
@@ -79,11 +72,6 @@ def test_add_remove_payment_logic(logged_in_page):
     # 4. Cancela tudo (fecha modal)
     payment_modal.close_without_saving()
 
-    # 5. Valida que o pedido NÃO mudou de status na lista
-    # Como cancelamos, ele deve continuar como "Não pago"
-    # Precisamos de um método para validar 'Não Pago' na OrderPage
-    # (Adicione este método simples na OrderManagementPage se não tiver)
-    # expect(orders_page.get_order_row(order_id)).to_contain_text("Não pago")
     print("✅ Teste de cancelamento concluído com sucesso.")
 
 
@@ -105,23 +93,18 @@ def test_pay_all_unpaid_orders(logged_in_page):
 
     orders_paid_count = 0
 
-    # 2. Loop: Enquanto encontrar pedidos não pagos...
     while True:
-        # Tenta abrir o próximo pedido não pago e pega o ID
         order_id = orders_page.open_first_unpaid_order()
 
-        # Se retornou None, significa que não tem mais pedidos para pagar. Sai do loop.
         if not order_id:
             print("🏁 Não há mais pedidos pendentes na lista.")
             break
 
-        # 3. Realiza o pagamento no Modal
-        payment_modal.select_payment_method("Dinheiro")
+        payment_modal.select_payment_method("Pix")
         payment_modal.launch_payment()
         payment_modal.confirm_payment()
 
         # 4. Validação Específica por ID
-        # Espera um pouco para o front atualizar o status
         logged_in_page.wait_for_timeout(1000) 
         orders_page.verify_order_is_paid(order_id)
         

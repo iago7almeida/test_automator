@@ -5,7 +5,7 @@ from models.web.base_page import BasePage
 class OrderManagementPage(BasePage):
     def __init__(self, page: Page):
         super().__init__(page)
-        self.order_rows = page.locator("tbody tr") # Assumindo estrutura de tabela
+        self.order_rows = page.locator("tbody tr")
         self.tab_in_progress = page.get_by_text("Em andamento")
 
     def filter_by_in_progress(self):
@@ -13,7 +13,6 @@ class OrderManagementPage(BasePage):
         self.page.wait_for_load_state("networkidle")
 
     def get_count_of_unpaid_orders(self):
-        """Conta quantos botões 'Não pago' visíveis existem."""
         return self.page.locator("text=Não pago").count()
 
     def open_first_unpaid_order(self):
@@ -26,8 +25,6 @@ class OrderManagementPage(BasePage):
             order_id = match.group() if match else "ID_DESCONHECIDO"
             
             print(f"🔍 Abrindo pagamento do pedido ID: {order_id}")
-            
-            # Clica no botão "Não pago" dentro dessa linha
             unpaid_row.get_by_text("Não pago", exact=True).click()
             return order_id
         
@@ -39,5 +36,7 @@ class OrderManagementPage(BasePage):
         
         expect(status_recebido).to_be_visible()
         print(f"✅ Pedido {order_id} confirmado como PAGO.")
+
+    
 
     

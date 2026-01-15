@@ -79,6 +79,7 @@ def test_create_order_withdrawal(logged_in_page: Page):
         new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
         new_order_page.select_order_type_withdrawal()  
         new_order_page.add_product_to_order(Products.TAMBAQUI)
+        
         new_order_page.proceed_to_payment()
 
         payment_page.select_payment_method(payment_method)
@@ -99,9 +100,8 @@ def test_create_order_delivery(logged_in_page: Page):
         print(f"🔄 Testando Delivery com: {payment_method}")
 
         dashboard_page.go_to_new_order()
-
-        new_order_page.select_order_type_delivery()
         new_order_page.search_and_select_customer(Customers.DEFAULT_CUSTOMER)
+        new_order_page.select_order_type_delivery()
         new_order_page.add_product_to_order(Products.TAMBAQUI)
         new_order_page.proceed_to_payment()
         

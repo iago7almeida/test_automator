@@ -1,16 +1,16 @@
 from playwright.sync_api import Page, expect
 from models.web.base_page import BasePage
-import re 
+import re
+import time 
 class PaymentModal(BasePage):
     def __init__(self, page: Page):
         super().__init__(page)
 
         # Definimos os dois possíveis pais
-        self.modal_order_balcony = page.locator("div.ReactModal__Content")
+        self.modal_order_balcony = page.get_by_role("dialog", name="Confirmar pagamento")
         self.modal_mesa = page.locator("div").filter(has_text="Selecione a forma de pagamento").last 
         self.modal_content = self.modal_order_balcony.or_(self.modal_mesa)
 
-        # Agora podemos encadear os botões sem erro, pois self.modal_content sempre existe
         self.btn_money = self.modal_content.locator("button", has_text="Dinheiro")
         self.btn_pix = self.modal_content.locator("button", has_text="Pix")
         self.btn_debit = self.modal_content.locator("button", has_text="Débito")
@@ -22,9 +22,9 @@ class PaymentModal(BasePage):
         # Botões de ação
         self.btn_launch = self.modal_content.locator("button", has_text="Lançar")
         self.btn_finalize = self.page.locator("button", has_text="Finalizar Comanda")
-        self.btn_confirm = self.modal_content.locator("button", has_text="Confirmar")
+        self.btn_confirm = page.locator("button", has_text="Confirmar")
         self.btn_cancel_modal = self.modal_content.locator("button", has_text="Cancelar").last
-        self.missing_amount_text = self.modal_content.locator("div", has_text="Falta pagar").last
+        self.missing_amount_text = page.locator("div", has_text="Falta pagar").last
 
 
     def select_payment_method(self, method: str):
@@ -62,10 +62,10 @@ class PaymentModal(BasePage):
             return  
         print("🚀 Clicando Lançar")
         self.btn_launch.click()
-        self.page.wait_for_timeout(500)
+        self.page.wait_for_timeout(5000)
 
     def get_remaining_amount(self) -> str:
-        self.missing_amount_text.wait_for()
+        self.missing_amount_text.wait_for(state="visible", timeout=2000)
         return self.missing_amount_text.inner_text().replace("Falta pagar", "").replace("\xa0", " ").strip()
 
     def finalize_order_sheet(self):
@@ -75,5 +75,10 @@ class PaymentModal(BasePage):
         self.btn_finalize.click()
 
     def confirm_payment(self):
+        print("Ciicando em confirmar/enviar...")
         self.btn_confirm.click()
-        expect(self.modal_content).to_be_hidden(timeout=10000)
+        self.modal_content.wait_for(state="hidden", timeout=10000)
+
+    def remove_staged_payment(self):
+        print("Aqui na remoção")
+        
