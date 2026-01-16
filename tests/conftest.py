@@ -1,9 +1,11 @@
 # conftest.py
 import pytest
+import time
 from playwright.sync_api import sync_playwright
 
 from config.settings import get_config
 from models.web.login_page import LoginPage
+from utils.perfomance_tracker import PerformanceTracker
 
 cfg = get_config()
 
@@ -20,6 +22,18 @@ def logged_in_page():
         login.navigate()
         login.login(cfg.USERNAME, cfg.PASSWORD)
 
-        yield page  # entrega a página para os testes
+        yield page
 
-        browser.close()  # fecha ao final do teste
+        browser.close()
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_protocol(item, nextitem):
+    start = time.time()
+    yield
+    duration = time.time() - start
+    
+    PerformanceTracker.record(f"TESTE: {item.nodeid}", duration)
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_sessionfinish(session, exitstatus):
+    PerformanceTracker.generate_report("relatorio_completo_projeto.csv")

@@ -1,10 +1,18 @@
 from playwright.sync_api import Page
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
-
+from utils.perfomance_tracker import auto_measure_func
 
 class BasePage:
     def __init__(self, page: Page):
         self.page = page
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        
+        for attr_name, attr_value in cls.__dict__.items():
+            if callable(attr_value) and not attr_name.startswith("_"):
+                decorated_method = auto_measure_func(attr_value)
+                setattr(cls, attr_name, decorated_method)
 
     def click(self, selector: str, **kwargs):
         self.page.click(selector, **kwargs)
