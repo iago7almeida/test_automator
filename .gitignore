@@ -8,11 +8,16 @@
 # 🔒 SEGURANÇA - Nunca versionar dados sensíveis
 # ==============================================================================
 .env
-.env.local                        # Variáveis de ambiente local específico
-.env.*.local                      # Variáveis de ambiente por ambiente
-**/.env                      # Variáveis de ambiente em pastas de ambiente
-*.pem                             # Chaves privadas
-*.key                             # Chaves criptográficas
+# Variáveis de ambiente local específico
+.env.local
+# Variáveis de ambiente por ambiente
+.env.*.local
+# Variáveis de ambiente em pastas de ambiente
+**/.env
+# Chaves privadas
+*.pem
+# Chaves criptográficas
+*.key
 
 # ==============================================================================
 # 🐍 Python
@@ -20,91 +25,132 @@
 __pycache__/
 __pycache__/*
 __pycache__/**
-*.py[cod]                         # Bytecode compilado
-*$py.class                        # Bytecode dinamicamente criado
-*.so                              # Extensões C compiladas
-dist/                             # Distribuição
-build/                            # Build
-*.egg-info/                       # Egg info
-*.eggs/                           # Eggs
-.Python                           # Python
+# Bytecode compilado
+*.py[cod]
+# Bytecode dinamicamente criado
+*$py.class
+# Extensões C compiladas
+*.so
+# Distribuição
+dist/
+# Build
+build/
+# Egg info
+*.egg-info/
+# Eggs
+*.eggs/
+# Python
+.Python
 
 # ==============================================================================
 # 📦 Virtual Environment
 # ==============================================================================
-venv/*                             # Virtual environment padrão
-env/                              # Virtual environment alternativo
+# Virtual environment padrão
+.venv/
+# Virtual environment alternativo
+env/
 ENV/
 env.bak/
 venv.bak/
-.venv/
 
 # ==============================================================================
 # 🧪 Testes & Coverage
 # ==============================================================================
-.pytest_cache/                    # Cache do pytest
-.coverage                         # Arquivo de cobertura
-htmlcov/                          # Relatório HTML de cobertura
-report.html                       # Relatório HTML de testes
-.coverage.*                       # Arquivos de cobertura
+# Cache do pytest
+.pytest_cache/
+# Arquivo de cobertura
+.coverage
+# Relatório HTML de cobertura
+htmlcov/
+# Relatório HTML de testes
+report.html
+# Arquivos de cobertura
+.coverage.*
 
 # ==============================================================================
 # 📸 Screenshots & Logs
 # ==============================================================================
-tests/screenshots/                # Screenshots de testes (locais)
+# Screenshots de testes (locais)
+tests/screenshots/
 **/screenshots/*
 **/screenshots/
-logs/                             # Arquivos de log
-*.log                             # Arquivos de log
-debug.log                         # Log de debug
+# Arquivos de log
+logs/
+# Arquivos de log
+*.log
+# Log de debug
+debug.log
 
 # ==============================================================================
 # 🎭 Playwright
 # ==============================================================================
-playwright/.auth/                 # Playwright auth cache
-test-results/                     # Resultados de teste
-playwright-report/                # Relatório do Playwright
+# Playwright auth cache
+playwright/.auth/
+# Resultados de teste
+test-results/
+# Relatório do Playwright
+playwright-report/
 
 # ==============================================================================
 # 💻 IDE & Editor
 # ==============================================================================
-.vscode/                          # Visual Studio Code
-.idea/                            # JetBrains IDEs
-*.swp                             # Vim
-*.swo                             # Vim
-*~                                # Editor temporário
-.DS_Store                         # macOS
-Thumbs.db                         # Windows
-.project                          # Eclipse
-.pydevproject                     # Eclipse
-*.sublime-project                 # Sublime
-*.sublime-workspace               # Sublime
+# Visual Studio Code
+.vscode/
+# JetBrains IDEs
+.idea/
+# Vim
+*.swp
+*.swo
+# Editor temporário
+*~
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+# Eclipse
+.project
+.pydevproject
+# Sublime
+*.sublime-project
+*.sublime-workspace
 
 # ==============================================================================
 # 📝 Editors & Temp Files
 # ==============================================================================
-*.bak                             # Backup
-*.tmp                             # Arquivo temporário
-*.orig                            # Arquivo original
-*.rej                             # Rejeição de patch
+# Backup
+*.bak
+# Arquivo temporário
+*.tmp
+# Arquivo original
+*.orig
+# Rejeição de patch
+*.rej
 
 # ==============================================================================
 # 🔧 Ferramentas
 # ==============================================================================
-.mypy_cache/                      # Cache do mypy
-.dmypy.json                       # dmypy.json
-dmypy.json                        # dmypy.json
-.pyre/                            # Pyre type checker
-.pylint.d/                        # Pylint cache
+# Cache do mypy
+.mypy_cache/
+# dmypy.json
+.dmypy.json
+# Pyre type checker
+.pyre/
+# Pylint cache
+.pylint.d/
 
 # ==============================================================================
 # 📊 Relatórios & Artefatos
 # ==============================================================================
-*.xml                             # JUnit XML (CI/CD)
-reports/                          # Relatórios
-*.csv                             # Dados CSV
-*.xlsx                            # Dados Excel
-*.pdf                             # PDFs
+# JUnit XML (CI/CD)
+*.xml
+# Relatórios
+reports/
+# Dados CSV
+*.csv
+# Dados Excel
+*.xlsx
+# PDFs
+*.pdf
 
 # ==============================================================================
 # 🐳 Docker (se usar)
@@ -127,7 +173,9 @@ site-packages/
 # ==============================================================================
 # EXCEÇÕES - Arquivos que devem ser versionados mesmo ignorando padrões
 # ==============================================================================
-!.env.example                     # Template deve ser versionado
-!requirements.txt                 # Dependências devem ser versionadas
-!setup.py                         # Setup devem ser versionados
-
+# Template deve ser versionado
+!.env.example
+# Dependências devem ser versionadas
+!requirements.txt
+# Setup devem ser versionados
+!setup.py
