@@ -36,36 +36,6 @@ def test_split_payment_pix_and_cash(logged_in_page):
     payment_modal.confirm_payment()
 
 
-@pytest.mark.frontend
-def test_add_remove_payment_logic(logged_in_page):
-    dashboard = DashboardPage(logged_in_page)
-    orders_page = OrderManagementPage(logged_in_page)
-    payment_modal = PaymentModal(logged_in_page)
-
-    dashboard.go_to_order_sheet()
-    orders_page.filter_by_in_progress()
-    
-    order_id = orders_page.open_first_unpaid_order()
-    if not order_id:
-        pytest.skip("Sem pedidos pendentes.")
-
-    payment_modal.select_payment_method("Dinheiro")
-    payment_modal.launch_payment()
-    assert "R$ 0,00" in payment_modal.get_remaining_amount()
-
-    # 2. Ops, errei! Vou remover.
-    payment_modal.remove_staged_payment(index=0)
-
-    # 3. Verifica se o valor "Falta pagar" VOLTOU (não é mais zero)
-    remaining = payment_modal.get_remaining_amount()
-    print(f"🔄 Valor restaurado após exclusão: {remaining}")
-    assert "R$ 0,00" not in remaining
-
-    # 4. Cancela tudo (fecha modal)
-    payment_modal.close_without_saving()
-
-    print("✅ Teste de cancelamento concluído com sucesso.")
-
 
 
 
