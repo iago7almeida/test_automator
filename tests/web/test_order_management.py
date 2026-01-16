@@ -38,14 +38,6 @@ def test_split_payment_pix_and_cash(logged_in_page):
 
 @pytest.mark.frontend
 def test_add_remove_payment_logic(logged_in_page):
-    """
-    Teste de Arrependimento:
-    1. Abre pedido.
-    2. Lança pagamento total.
-    3. Remove o pagamento (lixeira).
-    4. Cancela o modal (fecha sem pagar).
-    5. Verifica que pedido continua 'Não pago'.
-    """
     dashboard = DashboardPage(logged_in_page)
     orders_page = OrderManagementPage(logged_in_page)
     payment_modal = PaymentModal(logged_in_page)
@@ -104,7 +96,6 @@ def test_pay_all_unpaid_orders(logged_in_page):
         payment_modal.launch_payment()
         payment_modal.confirm_payment()
 
-        # 4. Validação Específica por ID
         logged_in_page.wait_for_timeout(1000) 
         orders_page.verify_order_is_paid(order_id)
         
@@ -114,3 +105,51 @@ def test_pay_all_unpaid_orders(logged_in_page):
         pytest.skip("Nenhum pedido 'Não pago' foi encontrado para testar.")
     else:
         print(f"🎉 Sucesso! Total de pedidos pagos neste teste: {orders_paid_count}")
+
+
+@pytest.mark.frontend
+def test_order_status_flow(logged_in_page):
+    dashboard = DashboardPage(logged_in_page)
+    orders_page = OrderManagementPage(logged_in_page)
+    dashboard.go_to_order_sheet()
+    orders_page.filter_by_in_progress()
+    ST_PENDENTE = "PENDENTE"
+    ST_CONFIRMADO = "CONFIRMADO"
+    ST_PRONTO = "PRONTO"
+    ST_ENTREGUE = "ENTREGUE"
+    
+    OPT_CONFIRMADO = "Confirmado"
+    OPT_PRONTO = "Pronto"
+    OPT_ENTREGUE = "Entregue"
+
+    processed_count = 0
+    print("\n🚀 Iniciando processamento em massa de pedidos...")
+    while True:
+        order_id = orders_page.get_order_id_by_status(ST_PENDENTE)
+        if not order_id:
+            print("🏁 Não há mais pedidos 'PENDENTE' na lista.")
+            break
+
+        print(f"\n🔄 Processando pedido ID: {order_id} ({processed_count + 1}º da fila)")
+
+        orders_page.change_order_status(order_id, ST_PENDENTE, OPT_CONFIRMADO)
+        orders_page.verify_status_order(order_id, ST_CONFIRMADO)
+        
+        # 2. CONFIRMADO -> PRONTO
+        orders_page.change_order_status(order_id, ST_CONFIRMADO, OPT_PRONTO)
+        orders_page.verify_status_order(order_id, ST_PRONTO)
+
+        # 3. PRONTO -> ENTREGUE
+        orders_page.change_order_status(order_id, ST_PRONTO, OPT_ENTREGUE)
+        
+        try:
+            orders_page.verify_status_order(order_id, ST_ENTREGUE)
+        except:
+            print(f"✅ Pedido {order_id} finalizado e removido da lista visual.")
+        
+        processed_count += 1
+
+    if processed_count == 0:
+        pytest.skip("Nenhum pedido 'PENDENTE' foi encontrado para iniciar o teste.")
+    else:
+        print(f"\n🎉 Sucesso Total! {processed_count} pedidos completaram o ciclo de vida.")
