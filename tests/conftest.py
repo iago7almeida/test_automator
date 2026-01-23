@@ -24,6 +24,8 @@ def logged_in_page():
 
         yield page
 
+        page.close()
+        context.close()
         browser.close()
 
 @pytest.hookimpl(hookwrapper=True)
