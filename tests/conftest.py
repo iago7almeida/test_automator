@@ -13,7 +13,7 @@ cfg = get_config()
 @pytest.fixture
 def logged_in_page():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch()
         context = browser.new_context()
         page = context.new_page()
 
@@ -31,7 +31,7 @@ def pytest_runtest_protocol(item, nextitem):
     start = time.time()
     yield
     duration = time.time() - start
-    
+
     PerformanceTracker.record(f"TESTE: {item.nodeid}", duration)
 
 @pytest.hookimpl(tryfirst=True)
