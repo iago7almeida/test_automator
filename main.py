@@ -10,7 +10,15 @@ async def rodar_testes():
 
     try:
         processo = subprocess.run(
-            ["pytest", "tests", "--html=reports/report.html", "--self-contained-html"],
+            [
+                "pytest", 
+                "tests/test_initial.py",
+                "tests/web/test_single_orders.py",
+                "tests/web/test_order_management.py",
+                "tests/web/test_table_operations.py",
+                "--html=reports/report.html", 
+                "--self-contained-html"
+            ],
             check=True,
         )
         print(f"[{datetime.now()}] Testes finalizados com sucesso ✅")
