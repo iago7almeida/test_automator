@@ -115,6 +115,9 @@ def test_dashboard(logged_in_page):
 ## 🔧 Comandos Úteis
 
 ```bash
+# Criar ambiente virtual
+python -m venv .venv
+
 # Ativar virtual environment
 source .venv/bin/activate
 
