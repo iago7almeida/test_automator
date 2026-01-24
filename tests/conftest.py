@@ -2,7 +2,6 @@
 import pytest
 import time
 from playwright.sync_api import sync_playwright
-
 from config.settings import get_config
 from models.web.login_page import LoginPage
 from utils.perfomance_tracker import PerformanceTracker
@@ -13,7 +12,7 @@ cfg = get_config()
 @pytest.fixture
 def logged_in_page():
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(headless=cfg.HEADLESS)
         context = browser.new_context()
         page = context.new_page()
 
