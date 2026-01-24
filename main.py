@@ -28,11 +28,6 @@ async def run_tests():
             ]
         )
 
-        logger.info(f"STDOUT{processo.stdout}")
-
-        # Erros, se houver
-        logger.info(f"STDERR:{processo.stderr}")
-
         logger.info("Código de saída:", processo.returncode)
         logger.info(f"[{datetime.now()}] Testes finalizados com sucesso ✅")
 
