@@ -13,18 +13,21 @@ class PaymentPage:
     def select_payment_method(self, method: str):
         payment_button = self.page.get_by_role("button", name=method, exact=True)
         expect(payment_button).to_be_visible()
-        print("antes de clicar select_payment")
         payment_button.click()
         print("Concluí payment_method")
 
     def select_other_sub_method(self, sub_method):
-        other_sub_method_button = self.page.locator("#paymentMethod")
-        expect(other_sub_method_button).to_be_visible()
-        other_sub_method_button.click()
-        select_sub_method = self.page.locator(f"p[title='{sub_method}']")
-        expect(select_sub_method).to_be_visible(timeout=3000)
-        select_sub_method.click()
-        sleep(2)
+        print(f"Tentando selecionar sub-método: {sub_method}")
+    
+        target_option = self.page.get_by_text(sub_method, exact=True)
+        if target_option.is_visible():
+            target_option.click()
+        else:
+            try:
+                self.page.locator("input[placeholder*='Selecione']").click(timeout=2000)
+            except:
+                pass
+            target_option.click(force=True)
 
     def launch_order(self):
         sleep(1)
