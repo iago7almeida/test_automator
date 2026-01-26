@@ -9,3 +9,5 @@ services:
     working_dir: /app
     command: python main.py
     restart: unless-stopped
+    ports:
+         - "8080:8080"

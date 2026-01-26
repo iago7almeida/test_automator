@@ -16,19 +16,30 @@ async def run_tests():
     logger.info(f"\n[{datetime.now()}] Iniciando testes Playwright...")
 
     try:
-        processo = subprocess.run(
+        subprocess.run(
             [
                 "pytest",
                 "tests/test_initial.py",
                 # "tests/web/test_single_orders.py",
                 # "tests/web/test_order_management.py",
                 "tests/web/test_table_operations.py",
-                "--html=reports/report.html",
-                "--self-contained-html",
-            ]
+                "--alluredir=allure-results"
+            ],
+            check=True,
         )
 
-        logger.info("Código de saída:", processo.returncode)
+        subprocess.run(
+            [
+                "allure",
+                "generate",
+                "allure-results",
+                "-o",
+                "allure-report",
+                "--clean",
+            ],
+            check=True,
+        )
+
         logger.info(f"[{datetime.now()}] Testes finalizados com sucesso ✅")
 
     except subprocess.CalledProcessError as e:
