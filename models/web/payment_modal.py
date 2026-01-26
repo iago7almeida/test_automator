@@ -1,5 +1,6 @@
 from playwright.sync_api import Page, expect
 from models.web.base_page import BasePage
+
 class PaymentModal(BasePage):
     def __init__(self, page: Page):
         super().__init__(page)
@@ -33,10 +34,14 @@ class PaymentModal(BasePage):
         except AssertionError:
             print("ERRO: Modal não abriu a tempo.")
             raise
-        if method.lower() == "dinheiro": self.btn_money.click()
-        elif method.lower() == "pix": self.btn_pix.click()
-        elif method.lower() == "débito": self.btn_debit.click()
-        elif method.lower() == "crédito": self.btn_credit.click()
+        if method.lower() == "dinheiro":
+            self.btn_money.click()
+        elif method.lower() == "pix":
+            self.btn_pix.click()
+        elif method.lower() == "débito":
+            self.btn_debit.click()
+        elif method.lower() == "crédito":
+            self.btn_credit.click()
 
         else:
             raise ValueError(f"Método de pagamento não reconhecido: {method}")
