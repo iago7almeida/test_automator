@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import subprocess
+import os
 from datetime import datetime
 
 INTERVALO = 30 * 60  # 30 minutos
@@ -20,22 +21,10 @@ async def run_tests():
             [
                 "pytest",
                 "tests/test_initial.py",
-                # "tests/web/test_single_orders.py",
-                # "tests/web/test_order_management.py",
+                "tests/web/test_single_orders.py",
+                "tests/web/test_order_management.py",
                 "tests/web/test_table_operations.py",
                 "--alluredir=allure-results"
-            ],
-            check=True,
-        )
-
-        subprocess.run(
-            [
-                "allure",
-                "generate",
-                "allure-results",
-                "-o",
-                "allure-report",
-                "--clean",
             ],
             check=True,
         )
@@ -47,9 +36,26 @@ async def run_tests():
 
     except Exception as e:
         logger.error(f"[{datetime.now()}] Erro ao rodar testes: {e}")
-
+        if os.path.exists("allure-results"):
+            subprocess.run(
+                [
+                    "allure",
+                    "generate",
+                    "allure-results",
+                    "-o",
+                    "allure-report",
+                    "--clean",
+                ],
+                check=True,
+            )
+            logger.info(f"[{datetime.now()}] Relatório Allure gerado com sucesso ✅")
 
 async def test_execution_routine():
+    subprocess.Popen(
+        ["allure", "open", "allure-report", "-p", "8080", "-h", "0.0.0.0"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
     while True:
         await run_tests()
         logger.info(f"[{datetime.now()}] Aguardando 30 minutos...\n")
