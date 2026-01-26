@@ -145,6 +145,8 @@ Thumbs.db
 *.xml
 # Relatórios
 reports/
+allure-report/
+allure-results/
 # Dados CSV
 *.csv
 # Dados Excel
