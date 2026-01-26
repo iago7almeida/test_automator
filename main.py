@@ -29,13 +29,6 @@ async def run_tests():
             check=True,
         )
 
-        logger.info(f"[{datetime.now()}] Testes finalizados com sucesso ✅")
-
-    except subprocess.CalledProcessError as e:
-        logger.error(f"[{datetime.now()}] Testes falharam ❌ Código: {e.returncode}")
-
-    except Exception as e:
-        logger.error(f"[{datetime.now()}] Erro ao rodar testes: {e}")
         if os.path.exists("allure-results"):
             subprocess.run(
                 [
@@ -49,6 +42,14 @@ async def run_tests():
                 check=True,
             )
             logger.info(f"[{datetime.now()}] Relatório Allure gerado com sucesso ✅")
+
+        logger.info(f"[{datetime.now()}] Testes finalizados com sucesso ✅")
+
+    except subprocess.CalledProcessError as e:
+        logger.error(f"[{datetime.now()}] Testes falharam ❌ Código: {e.returncode}")
+
+    except Exception as e:
+        logger.error(f"[{datetime.now()}] Erro ao rodar testes: {e}")
 
 async def test_execution_routine():
     subprocess.Popen(
