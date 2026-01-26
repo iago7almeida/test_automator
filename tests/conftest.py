@@ -34,7 +34,3 @@ def pytest_runtest_protocol(item, nextitem):
     duration = time.time() - start
 
     PerformanceTracker.record(f"TESTE: {item.nodeid}", duration)
-
-@pytest.hookimpl(tryfirst=True)
-def pytest_sessionfinish(session, exitstatus):
-    PerformanceTracker.generate_report("relatorio_completo_projeto.csv")

@@ -1,24 +1,22 @@
 from playwright.sync_api import Page, expect
 from models.web.base_page import BasePage
-import re
-import time 
 class PaymentModal(BasePage):
     def __init__(self, page: Page):
         super().__init__(page)
 
         # Definimos os dois possíveis pais
         self.modal_order_balcony = page.get_by_role("dialog", name="Confirmar pagamento")
-        self.modal_mesa = page.locator("div").filter(has_text="Selecione a forma de pagamento").last 
+        self.modal_mesa = page.locator("div").filter(has_text="Selecione a forma de pagamento").last
         self.modal_content = self.modal_order_balcony.or_(self.modal_mesa)
 
         self.btn_money = self.modal_content.locator("button", has_text="Dinheiro")
         self.btn_pix = self.modal_content.locator("button", has_text="Pix")
         self.btn_debit = self.modal_content.locator("button", has_text="Débito")
         self.btn_credit = self.modal_content.locator("button", has_text="Crédito")
-        
+
         # Input de valor
         self.input_value = self.modal_content.locator("input").first
-        
+
         # Botões de ação
         self.btn_launch = self.modal_content.locator("button", has_text="Lançar")
         self.btn_finalize = self.page.locator("button", has_text="Finalizar Comanda")
@@ -29,18 +27,17 @@ class PaymentModal(BasePage):
 
     def select_payment_method(self, method: str):
         print(f"💳 Selecionando Aba: {method}")
- 
+
         try:
             expect(self.modal_content).to_be_visible(timeout=10000)
         except AssertionError:
             print("ERRO: Modal não abriu a tempo.")
-            self.page.screenshot(path="erro_modal_nao_abriu.png")
             raise
-        if method.lower() == "dinheiro": self.btn_money.click()       
-        elif method.lower() == "pix": self.btn_pix.click()       
-        elif method.lower() == "débito": self.btn_debit.click()       
+        if method.lower() == "dinheiro": self.btn_money.click()
+        elif method.lower() == "pix": self.btn_pix.click()
+        elif method.lower() == "débito": self.btn_debit.click()
         elif method.lower() == "crédito": self.btn_credit.click()
-        
+
         else:
             raise ValueError(f"Método de pagamento não reconhecido: {method}")
 
@@ -49,7 +46,7 @@ class PaymentModal(BasePage):
         self.input_value.click()
         self.input_value.press("ControlOrMeta+a")
         self.page.wait_for_timeout(100)
-        self.input_value.fill(amount) 
+        self.input_value.fill(amount)
 
     def launch_payment(self):
         try:
@@ -59,7 +56,7 @@ class PaymentModal(BasePage):
             return
         if self.btn_launch.is_disabled():
             print("✅ O valor já está pago (Botão Lançar inativo). Pulando etapa...")
-            return  
+            return
         print("🚀 Clicando Lançar")
         self.btn_launch.click()
         self.page.wait_for_timeout(5000)
@@ -81,4 +78,3 @@ class PaymentModal(BasePage):
 
     def remove_staged_payment(self):
         print("Aqui na remoção")
-        
