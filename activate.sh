@@ -31,20 +31,19 @@ fi
 if [ ! -f "$VENV_ACTIVATE" ]; then
     echo "❌ Virtual environment não encontrado em $VENV_ACTIVATE"
     echo ""
-    echo "Criar um novo venv:"
-    echo "  python -m venv .venv"
-    echo "  source activate.sh"
-    exit 1
+    echo "Criando um novo venv:"
+    python -m venv .venv
 fi
 
 # Ativar o venv
+echo "Ativando o virtual environment..."
 source "$VENV_ACTIVATE"
 
 echo "✅ Virtual environment ativado!"
-echo ""
+
 echo "Próximos passos:"
-echo "  1. pip install -r requirements.txt"
-echo "  2. playwright install"
-echo "  3. pre-commit install"
-echo "  4. pytest -v"
-echo ""
+echo "  1. Instalando dependências..."
+pip install -r requirements.txt
+echo "  2. Instalando ferramentas de teste"
+playwright install
+echo "Finalizado"
