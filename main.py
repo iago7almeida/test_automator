@@ -25,10 +25,10 @@ async def run_tests():
         subprocess.run(
             [
                 "pytest",
-                # "tests/test_initial.py",
+                "tests/test_initial.py",
                 "tests/web/test_single_orders.py",
-                # "tests/web/test_order_management.py",
-                # "tests/web/test_table_operations.py",
+                "tests/web/test_order_management.py",
+                "tests/web/test_table_operations.py",
                 "--alluredir=allure-results"
             ]
         )
