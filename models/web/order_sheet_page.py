@@ -1,6 +1,7 @@
 import re
 import random
 import time
+import uuid
 from playwright.sync_api import Page, expect
 from models.web.base_page import BasePage
 from models.web.payment_modal import PaymentModal
@@ -79,7 +80,8 @@ class OrderSheetPage(BasePage):
             # Espera um pouco para ver qual modal aparece
             if self.modal_open_order.is_visible(timeout=2000):
                 print("✨ Mesa vazia detectada. Abrindo comanda...")
-                
+                identifier_value = str(uuid.uuid1())
+                self.input_main_identifier.fill(str(identifier_value))
                 self.input_customer_name.fill(customer_name)
                 self.btn_confirm_open.click()
                 self.page.wait_for_timeout(1000)

@@ -7,7 +7,7 @@ class PaymentModal(BasePage):
 
         # Definimos os dois possíveis pais
         self.modal_order_balcony = page.get_by_role("dialog", name="Confirmar pagamento")
-        self.modal_mesa = page.locator("div").filter(has_text="Selecione a forma de pagamento").last
+        self.modal_mesa = page.locator("div").filter(has_text="Selecione o tipo de pagamento").last
         self.modal_content = self.modal_order_balcony.or_(self.modal_mesa)
 
         self.btn_money = self.modal_content.locator("button", has_text="Dinheiro")
