@@ -3,7 +3,6 @@ from playwright.sync_api import expect
 from models.web.dashboard_page import DashboardPage
 from models.web.order_management_page import OrderManagementPage
 from models.web.payment_modal import PaymentModal
-from models.web.payment_page import PaymentPage
 
 
 @pytest.mark.frontend
@@ -11,7 +10,6 @@ def test_split_payment_pix_and_cash(logged_in_page):
     dashboard = DashboardPage(logged_in_page)
     orders_page = OrderManagementPage(logged_in_page)
     payment_modal = PaymentModal(logged_in_page)
-    payment_page = PaymentPage(logged_in_page)
     dashboard.go_to_order_sheet()
     orders_page.filter_by_in_progress()
     
@@ -23,18 +21,16 @@ def test_split_payment_pix_and_cash(logged_in_page):
     payment_modal.select_payment_method("Pix")
     payment_modal.fill_amount("0,10") 
     payment_modal.launch_payment()
-    
     # Validação rápida
     remaining = payment_modal.get_remaining_amount()
     assert "R$ 0,00" not in remaining, f"Erro: Zerou cedo demais! Restante: {remaining}"
     payment_modal.select_payment_method("Dinheiro")
     payment_modal.launch_payment()
-    
     final_remaining = payment_modal.get_remaining_amount()
     assert "R$ 0,00" in final_remaining, f"Erro: Não zerou. Resta: {final_remaining}"
     
     payment_modal.confirm_payment()
-    payment_page.handle_fiscal_note_modal_if_appears()
+    #payment_page.handle_fiscal_note_modal_if_appears()
 
 
 
@@ -47,7 +43,6 @@ def test_pay_all_unpaid_orders(logged_in_page):
     dashboard = DashboardPage(logged_in_page)
     orders_page = OrderManagementPage(logged_in_page)
     payment_modal = PaymentModal(logged_in_page)
-    payment_page = PaymentPage(logged_in_page)
     # 1. Navegação
     dashboard.go_to_order_sheet()
     orders_page.filter_by_in_progress()
@@ -64,7 +59,6 @@ def test_pay_all_unpaid_orders(logged_in_page):
         payment_modal.select_payment_method("Pix")
         payment_modal.launch_payment()
         payment_modal.confirm_payment()
-        payment_page.handle_fiscal_note_modal_if_appears()
         logged_in_page.wait_for_timeout(1000) 
         orders_page.verify_order_is_paid(order_id)
         

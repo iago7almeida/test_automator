@@ -1,5 +1,6 @@
 from playwright.sync_api import Page, expect
 from models.web.base_page import BasePage
+from models.web.payment_page import PaymentPage
 
 class PaymentModal(BasePage):
     def __init__(self, page: Page):
@@ -77,8 +78,10 @@ class PaymentModal(BasePage):
         self.btn_finalize.click()
 
     def confirm_payment(self):
+        payment_page = PaymentPage(self.page)
         print("Ciicando em confirmar/enviar...")
         self.btn_confirm.click()
+        payment_page.handle_fiscal_note_modal_if_appears()
         self.modal_content.wait_for(state="hidden", timeout=10000)
 
     def remove_staged_payment(self):
