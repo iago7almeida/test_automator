@@ -19,7 +19,7 @@ class OrderSheetPage(BasePage):
         self.tables_section = page.locator("section").first 
         
         # --- Modal 1: Mesa Vazia ("Abrir comanda") ---
-        self.modal_open_order = page.locator("div[role='dialog']").filter(has_text="Abrir comanda")
+        self.modal_open_order = page.locator("div[role='dialog']").filter(has_text="Abrir ")
         self.input_main_identifier = self.modal_open_order.get_by_placeholder("Número ou nome da comanda")
         self.input_customer_name = self.modal_open_order.get_by_placeholder("Nome do cliente")
         self.btn_confirm_open = self.modal_open_order.get_by_role("button", name="Abrir comanda")
@@ -77,7 +77,6 @@ class OrderSheetPage(BasePage):
 
     def handle_table_opening_if_needed(self, customer_name="Cliente Teste"):
         try:
-            # Espera um pouco para ver qual modal aparece
             if self.modal_open_order.is_visible(timeout=2000):
                 print("✨ Mesa vazia detectada. Abrindo comanda...")
                 identifier_value = str(uuid.uuid1())
