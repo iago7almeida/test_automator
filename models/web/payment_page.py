@@ -51,7 +51,7 @@ class PaymentPage:
             print("Modal não apareceu ou foi comprometido")
 
     def handle_fiscal_note_modal_if_appears(self):
-        close_modal_button = self.page.get_by_role("button", name="Cancelar")
+        close_modal_button = self.page.get_by_role("button", name="Não emitir")
 
         try:
             expect(close_modal_button).to_be_visible(timeout=5000)

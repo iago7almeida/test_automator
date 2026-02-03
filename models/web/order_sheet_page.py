@@ -1,6 +1,7 @@
 import re
 import random
 import time
+import uuid
 from playwright.sync_api import Page, expect
 from models.web.base_page import BasePage
 from models.web.payment_modal import PaymentModal
@@ -18,7 +19,7 @@ class OrderSheetPage(BasePage):
         self.tables_section = page.locator("section").first 
         
         # --- Modal 1: Mesa Vazia ("Abrir comanda") ---
-        self.modal_open_order = page.locator("div[role='dialog']").filter(has_text="Abrir comanda")
+        self.modal_open_order = page.locator("div[role='dialog']").filter(has_text="Abrir ")
         self.input_main_identifier = self.modal_open_order.get_by_placeholder("Número ou nome da comanda")
         self.input_customer_name = self.modal_open_order.get_by_placeholder("Nome do cliente")
         self.btn_confirm_open = self.modal_open_order.get_by_role("button", name="Abrir comanda")
@@ -31,6 +32,8 @@ class OrderSheetPage(BasePage):
 
         # --- Modal 3: Mesa Ocupada (Ações) --- 
         self.modal_table_details = page.locator('div[class="sc-fa3a0b24-2 bAbjMs"]')
+        # Múltiplas comandas
+        self.multiple_modal = page.get_by_text("Selecionar comanda")
         # Botões de ação principais
         self.btn_new_item = self.modal_table_details.locator("button", has_text="Novo")      # Botão Laranja
         self.btn_receive = self.modal_table_details.get_by_role("button", name="Receber")     # Botão Verde
@@ -76,18 +79,35 @@ class OrderSheetPage(BasePage):
 
     def handle_table_opening_if_needed(self, customer_name="Cliente Teste"):
         try:
-            # Espera um pouco para ver qual modal aparece
             if self.modal_open_order.is_visible(timeout=2000):
                 print("✨ Mesa vazia detectada. Abrindo comanda...")
-                
+                identifier_value = str(uuid.uuid1())
+                self.input_main_identifier.fill(str(identifier_value))
                 self.input_customer_name.fill(customer_name)
                 self.btn_confirm_open.click()
                 self.page.wait_for_timeout(1000)
                 return True
-        except:
-            pass
+        except Exception as e:
+            print(f"⚠️ Erro ao tentar selecionar comanda múltipla: {e}")
         return False
     
+    def select_first_order_if_multiple(self):
+        try:
+            if self.multiple_modal.is_visible(timeout=2000):
+                print("🗂️ Mesa com múltiplas comandas detectada.")
+                card_regex = re.compile(r"comanda\s.+", re.IGNORECASE)            
+                first_orderSheet = self.page.get_by_role("button").filter(has_text=card_regex).first              
+                print(f"👆 Clicando na comanda: '{first_orderSheet.inner_text().splitlines()[0]}'")
+                
+                first_orderSheet.click(force=True)                
+                self.multiple_modal.wait_for(state="hidden", timeout=5000)
+                return True         
+        except Exception as e:
+            print(f"⚠️ ERRO CRÍTICO ao selecionar comanda: {e}")
+            raise e 
+            
+        return False
+
     def handle_administrative_password(self):
         try:
             if self.modal_password.is_visible(timeout=2000):
@@ -116,6 +136,7 @@ class OrderSheetPage(BasePage):
         
         # Se a mesa estiver vazia, abre ela primeiro
         self.handle_table_opening_if_needed()
+        self.select_first_order_if_multiple()
         self.is_order_sheet_opened()
         
         # --- Seleção de Produtos ---
@@ -162,7 +183,9 @@ class OrderSheetPage(BasePage):
             print("⚠️ A mesa está vazia! Não há nada para transferir.")
             self.btn_cancel_open.click()
             return
+        self.select_first_order_if_multiple()
         print("Clicando em 'Transferir'...")
+
         self.btn_transfer.click()
         self.modal_transfer_itens.wait_for(state="visible", timeout=3000)
         self.checkbox_select_all.click()
@@ -198,6 +221,7 @@ class OrderSheetPage(BasePage):
             print("⚠️ A mesa está vazia! Não há nada para pagar.")
             self.btn_cancel_open.click()
             return
+        self.select_first_order_if_multiple()
         self.btn_cancel_sheet.click()
         self.modal_cancel_sheet.wait_for(state="visible", timeout=5000)
         options = [
@@ -235,7 +259,7 @@ class OrderSheetPage(BasePage):
             print("⚠️ A mesa está vazia! Não há nada para pagar.")
             self.btn_cancel_open.click()
             return
-
+        self.select_first_order_if_multiple()
         print("💸 Clicando em 'Receber'...")
         self.btn_receive.click()
         self.payment_modal.select_payment_method(payment_method)

@@ -1,7 +1,7 @@
 import datetime
 import logging
 from pathlib import Path
-
+import re
 from playwright.sync_api import Page, expect
 
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ class DashboardPage:
         self.menu_opened = page.locator('[hoverlabel="Menu"]')
         self.new_order_button = page.get_by_label("newOrder")
         self.order_sheet_button = page.locator('[hoverlabel="Gestão de pedidos"]')
-        self.tables_button = page.locator('[hoverlabel="Todas as Mesas"]')
+        self.tables_button = page.locator('[hoverlabel~="Mesas"]')
         self.cash_manager_button = page.get_by_label("Gerenciador de caixa")
         self.clients_button = page.locator('[hoverlabel="Clientes"]')
         self.logout_button = page.get_by_role("button", name="Sair")
