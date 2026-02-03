@@ -1,0 +1,45 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+    commands:
+      - echo "Instalando dependências..."
+      - pip install -r requirements.txt
+      - playwright install --with-deps chromium
+
+  build:
+    commands:
+      - echo "Iniciando os testes..."
+      - |
+        pytest \
+        tests/test_initial.py \
+        tests/web/test_single_orders.py \
+        tests/web/test_order_management.py \
+        tests/web/test_table_operations.py \
+        --html=reports/index.html \
+        --self-contained-html \
+        -v ; \
+        TEST_EXIT_CODE=$?
+      
+      - echo "Os testes terminaram. Código de saída: $TEST_EXIT_CODE"
+
+      # Bloco de decisão: Se o código for diferente de 0, falha o build manualmente
+      - |
+        if [ $TEST_EXIT_CODE -ne 0 ]; then
+          echo "FALHA CRÍTICA: Testes não passaram. Bloqueando o pipeline."
+          exit $TEST_EXIT_CODE
+        else
+          echo "SUCESSO: Todos os testes passaram."
+        fi
+
+post_build:
+    commands:
+      - echo "Fase de build encerrada. Preparando artefatos..."
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: reports
+  name: relatorio-$(date +%Y-%m-%d)
