@@ -39,9 +39,7 @@ async def run_tests():
                     "npx",
                     "allure",
                     "generate",
-                    "allure-results",
-                    "-o",
-                    "allure-report"
+                    "allure-results"
                 ]
             )
             logger.info(f"[{datetime.now()}] Relatório Allure gerado com sucesso ✅")
