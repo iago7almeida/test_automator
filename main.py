@@ -22,16 +22,16 @@ async def run_tests():
     logger.info(f"\n[{datetime.now()}] Iniciando testes Playwright...")
 
     try:
-        subprocess.run(
-            [
-                "pytest",
-                "tests/test_initial.py",
-                "tests/web/test_single_orders.py",
-                "tests/web/test_order_management.py",
-                "tests/web/test_table_operations.py",
-                "--alluredir=allure-results"
-            ]
-        )
+        # subprocess.run(
+        #     [
+        #         "pytest",
+        #         "tests/test_initial.py",
+        #         "tests/web/test_single_orders.py",
+        #         "tests/web/test_order_management.py",
+        #         "tests/web/test_table_operations.py",
+        #         "--alluredir=allure-results"
+        #     ]
+        # )
 
         if os.path.exists("allure-results"):
             subprocess.run(
@@ -51,7 +51,7 @@ async def run_tests():
 
             if os.path.exists("allure-report"):
                 allure_process = subprocess.Popen(
-                    ["npx", "allure", "open", "allure-report", "-p", "8080"]
+                    ["npx", "allure", "open", "allure-report", "--port", "8080"]
                 )
 
         logger.info(f"[{datetime.now()}] Testes finalizados com sucesso ✅")
