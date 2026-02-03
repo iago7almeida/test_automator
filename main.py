@@ -36,12 +36,10 @@ async def run_tests():
         if os.path.exists("allure-results"):
             subprocess.run(
                 [
+                    "npx",
                     "allure",
                     "generate",
-                    "allure-results",
-                    "-o",
-                    "allure-report",
-                    "--clean",
+                    "allure-results"
                 ]
             )
             logger.info(f"[{datetime.now()}] Relatório Allure gerado com sucesso ✅")
@@ -53,7 +51,7 @@ async def run_tests():
 
             if os.path.exists("allure-report"):
                 allure_process = subprocess.Popen(
-                    ["allure", "open", "allure-report", "-p", "8080", "-h", "0.0.0.0"]
+                    ["npx", "allure", "open", "allure-report", "--port", "8080"]
                 )
 
         logger.info(f"[{datetime.now()}] Testes finalizados com sucesso ✅")

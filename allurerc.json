@@ -1,0 +1,10 @@
+{
+  "historyPath": "./history.jsonl",
+  "qualityGate": {
+      "rules": [
+        {
+          "maxFailures": "1"
+        }
+      ]
+    }
+}
