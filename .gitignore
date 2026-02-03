@@ -148,6 +148,7 @@ Thumbs.db
 reports/
 allure-report/
 allure-results/
+history.jsonl
 # Dados CSV
 *.csv
 # Dados Excel
