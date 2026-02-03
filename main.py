@@ -22,16 +22,16 @@ async def run_tests():
     logger.info(f"\n[{datetime.now()}] Iniciando testes Playwright...")
 
     try:
-        # subprocess.run(
-        #     [
-        #         "pytest",
-        #         "tests/test_initial.py",
-        #         "tests/web/test_single_orders.py",
-        #         "tests/web/test_order_management.py",
-        #         "tests/web/test_table_operations.py",
-        #         "--alluredir=allure-results"
-        #     ]
-        # )
+        subprocess.run(
+            [
+                "pytest",
+                "tests/test_initial.py",
+                "tests/web/test_single_orders.py",
+                "tests/web/test_order_management.py",
+                "tests/web/test_table_operations.py",
+                "--alluredir=allure-results"
+            ]
+        )
 
         if os.path.exists("allure-results"):
             subprocess.run(
