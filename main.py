@@ -2,6 +2,7 @@ import asyncio
 import logging
 import subprocess
 import os
+import shutil
 from datetime import datetime
 from subprocess import Popen
 from typing import Optional
@@ -22,6 +23,8 @@ async def run_tests():
     logger.info(f"\n[{datetime.now()}] Iniciando testes Playwright...")
 
     try:
+        if os.path.exists("allure-results"):
+            shutil.rmtree("allure-results")
         subprocess.run(
             [
                 "pytest",
@@ -34,6 +37,8 @@ async def run_tests():
         )
 
         if os.path.exists("allure-results"):
+            if os.path.exists("allure-report"):
+                shutil.rmtree("allure-report")
             subprocess.run(
                 [
                     "npx",
