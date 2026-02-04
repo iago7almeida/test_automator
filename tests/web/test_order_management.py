@@ -115,4 +115,4 @@ def test_order_status_flow(logged_in_page):
     if processed_count == 0:
         pytest.skip("Nenhum pedido 'PENDENTE' foi encontrado para iniciar o teste.")
     else:
-        logging_config.logging.info(f"\n🎉 Sucesso Total! {processed_count} pedidos completaram o ciclo de vida.")
+        logging.info(f"\n🎉 Sucesso Total! {processed_count} pedidos completaram o ciclo de vida.")
