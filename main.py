@@ -43,11 +43,11 @@ async def run_tests():
                 ]
             )
             logger.info(f"[{datetime.now()}] Relatório Allure gerado com sucesso ✅")
-            if allure_process is not None:
-                        if allure_process.poll() is None:
-                            logger.info("Encerrando servidor Allure antigo...")
-                            allure_process.terminate()
-                            allure_process.wait()
+
+            if allure_process and allure_process.poll() is None :
+                logger.info("Encerrando servidor Allure antigo...")
+                allure_process.terminate()
+                allure_process.wait()
 
             if os.path.exists("allure-report"):
                 allure_process = subprocess.Popen(
