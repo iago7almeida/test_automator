@@ -73,10 +73,12 @@ class PaymentModal(BasePage):
         return self.missing_amount_text.inner_text().replace("Falta pagar", "").replace("\xa0", " ").strip()
 
     def finalize_order_sheet(self):
+        payment_page = PaymentPage(self.page)
         logging.info("Finalizando conta...")
         expect(self.btn_finalize).to_be_enabled(timeout=15000)
         logging.info(self.btn_finalize.is_visible())
         self.btn_finalize.click()
+        payment_page.handle_fiscal_note_modal_if_appears()
 
     def confirm_payment(self):
         payment_page = PaymentPage(self.page)
