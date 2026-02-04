@@ -1,9 +1,7 @@
-import random
-
+import re
+import logging
 from playwright.sync_api import Page, expect
 from models.web.order_sheet_page import OrderSheetPage
-import time
-import re
 
 class TablesPage:
     def __init__(self, page: Page):
@@ -42,12 +40,12 @@ class TablesPage:
 
     def confirm_session_tables_pages(self):
         self.confirm_page_table.wait_for(state="visible", timeout=10000)
-        print("Sessão de mesas confirmada.")
+        logging.info("Sessão de mesas confirmada.")
 
     def open_tab_in_a_empty_table(self):
         self.get_empty_table_button.click()
         self.button_open_tab.click()
-        print("Comanda aberta com sucesso.")
+        logging.info("Comanda aberta com sucesso.")
 
     def open_tab_in_a_active_table(self):
         expect(self.get_active_table_button).to_be_visible(timeout=10000)
@@ -56,7 +54,7 @@ class TablesPage:
         self.button_new_tab.click()
         expect(self.save_button).to_be_visible(timeout=10000)
         self.save_button.click()
-        print("Nova comanda aberta com sucesso.")
+        logging.info("Nova comanda aberta com sucesso.")
 
     def select_category(self, category_name: str):
         category_buttton = self.page.get_by_role("button", name=category_name)
@@ -77,27 +75,27 @@ class TablesPage:
         self.send_payment_button.click()
         expect(self.ended_tab_button).to_be_visible(timeout=10000)
         self.ended_tab_button.click()
-        print("Pagamento recebido com sucesso.")
+        logging.info("Pagamento recebido com sucesso.")
 
     def select_area(self, area_index: int = 0):
-        print(f"🏙️ Abrindo menu de áreas e selecionando a opção {area_index}...")
+        logging.info(f"🏙️ Abrindo menu de áreas e selecionando a opção {area_index}...")
         self.areas_grid.click()
-        dropdown = self.page.locator("div[open]")        
+        dropdown = self.page.locator("div[open]")
         try:
             dropdown.wait_for(state="visible", timeout=3000)
         except:
-            print("❌ Erro: O menu dropdown não abriu (não encontrei div[open]).")
+            logging.info("❌ Erro: O menu dropdown não abriu (não encontrei div[open]).")
             return
         options = dropdown.locator("> div:not(.divider)")
         count = options.count()
         if area_index >= count:
-            print(f"⚠️ Índice {area_index} inválido. Existem apenas {count} áreas disponíveis.")
+            logging.info(f"⚠️ Índice {area_index} inválido. Existem apenas {count} áreas disponíveis.")
             self.page.keyboard.press("Escape")
             return
         target_option = options.nth(area_index)
         text = target_option.inner_text()
-        print(f"✅ Selecionando área: {text}")
-        
+        logging.info(f"✅ Selecionando área: {text}")
+
         target_option.click()
 
     @property
@@ -105,66 +103,65 @@ class TablesPage:
         return self.join_modal.locator('div[class*="ToToF"]')
 
     def join_tabs_in_a_table(self):
-        print("Iniciando o processo de juntar comandas...")               
+        logging.info("Iniciando o processo de juntar comandas...")
         self.btn_action_geral.click()
         self.btn_join_tabs.click()
         self.page.wait_for_timeout(1000)
         if self.alert_select_areas.is_visible():
-            print("⚠️ Alerta 'Selecione uma área' detectado. Corrigindo...")
+            logging.info("⚠️ Alerta 'Selecione uma área' detectado. Corrigindo...")
             self.select_area(1)
             self.btn_actions.click()
             self.btn_join_tabs.click()
         else:
-            print("ℹ️ Nenhum alerta de área detectado. Prosseguindo...")
-        print("Aguardando modal de junção abrir...")
-        self.join_modal.wait_for(state="visible", timeout=10000)    
+            logging.info("ℹ️ Nenhum alerta de área detectado. Prosseguindo...")
+        logging.info("Aguardando modal de junção abrir...")
+        self.join_modal.wait_for(state="visible", timeout=10000)
         self.input_orderSheet = self.join_modal.locator('input[placeholder="Busque um local/comanda"]')
         self.input_orderSheet.fill("0")
         try:
-            print("Aguardando resultados da busca carregarem...")
+            logging.info("Aguardando resultados da busca carregarem...")
             self.join_orders_items.nth(1).wait_for(state="visible", timeout=10000)
         except:
-            print("⚠️ Timeout: A lista não expandiu (ainda tem apenas 1 ou 0 itens).")
+            logging.info("⚠️ Timeout: A lista não expandiu (ainda tem apenas 1 ou 0 itens).")
 
         targets = [0, 2]
         count = self.join_orders_items.count()
-        print(f"Total de itens visíveis agora: {count}")
+        logging.info(f"Total de itens visíveis agora: {count}")
 
         for target in targets:
             item_to_click = None
-            
+
             if isinstance(target, int):
                 if target < count:
                     item_to_click = self.join_orders_items.nth(target)
                 else:
-                    print(f"⚠️ Índice {target} inválido (Lista tem {count} itens).")        
+                    logging.info(f"⚠️ Índice {target} inválido (Lista tem {count} itens).")
             elif isinstance(target, str):
                 item_to_click = self.join_orders_items.filter(has_text=target).first
-            
+
             if item_to_click:
                 item_to_click.scroll_into_view_if_needed()
                 item_to_click.click()
-                print(f"☑️ Clicado: {target}")
+                logging.info(f"☑️ Clicado: {target}")
                 self.page.wait_for_timeout(500)
-            
 
-        print("Abrindo seleção de destino...")
+
+        logging.info("Abrindo seleção de destino...")
         dropdown_trigger = self.join_modal.locator('div:has-text("N° da comanda")').last
         dropdown_trigger.scroll_into_view_if_needed()
         dropdown_trigger.click()
-        print("🔽 Dropdown de destino aberto.")
+        logging.info("🔽 Dropdown de destino aberto.")
         opcao_destino = self.page.locator('div').filter(has_text=re.compile(r"Mesa|Comanda|Avulsa")).last
 
-        opcao_destino.wait_for(state="visible", timeout=5000)            
+        opcao_destino.wait_for(state="visible", timeout=5000)
         texto_opcao = opcao_destino.inner_text().splitlines()[0]
-        print(f"✅ Clicando na opção: {texto_opcao}")            
+        logging.info(f"✅ Clicando na opção: {texto_opcao}")
         opcao_destino.click()
         self.confirm_join_button.click()
         self.order_sheet.handle_administrative_password()
         self.modal_confirm_join.is_visible(timeout=5000)
         self.btn_confirm_join.click()
 
-        print("☑️ Junção de mesas concluídas com sucesso")
+        logging.info("☑️ Junção de mesas concluídas com sucesso")
 
         self.page.wait_for_timeout(5000)
-

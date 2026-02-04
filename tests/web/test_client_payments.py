@@ -1,6 +1,6 @@
 import pytest
+import logging
 from playwright.sync_api import Page
-
 from models.web.client_details_page import ClientDetailsPage
 from models.web.client_list_page import ClientListPage
 from models.web.dashboard_page import DashboardPage
@@ -40,8 +40,8 @@ class TestClientPayments:
         deleted_count = self.client_details_page.delete_all_listed_payments()
 
         if deleted_count > 0:
-            print(f"{deleted_count} pagamentos do cliente foram excluídos.")
+            logging.info(f"{deleted_count} pagamentos do cliente foram excluídos.")
         else:
-            print("Nenhum pagamento do cliente encontrado para exclusão.")
+            logging.info("Nenhum pagamento do cliente encontrado para exclusão.")
 
         self.client_details_page.close_client_area_or_modal()

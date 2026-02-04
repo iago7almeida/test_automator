@@ -1,10 +1,6 @@
 import logging
-
 from playwright.sync_api import Page, expect
-
 from config.settings import get_config
-
-logger = logging.getLogger(__name__)
 
 
 class NewOrderPage:
@@ -22,7 +18,7 @@ class NewOrderPage:
 
     def navigate(self):
         url = f"{self.config.BASE_URL}/createSingleOrder"
-        logger.info("📍 Navegando para: %s", url)
+        logging.info("📍 Navegando para: %s", url)
         self.page.goto(url)
 
     def select_order_type_balcony(self):

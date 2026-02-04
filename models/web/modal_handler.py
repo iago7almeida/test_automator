@@ -1,5 +1,5 @@
 import time
-
+import logging
 from playwright.sync_api import Page
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
@@ -9,13 +9,13 @@ def keep_open(page):
         try:
             modal_visible = page.query_selector("header.sc-60baa1a1-0.iranfm")
             if modal_visible:
-                print("Modal detectado! Clicando no botão 'Manter aberto'.")
+                logging.info("Modal detectado! Clicando no botão 'Manter aberto'.")
                 page.click("button.sc-60baa1a1-4.kcgrGw")
                 break
 
             time.sleep(0.5)
         except Exception as e:
-            print(f"Erro ao verificar modal: {e}")
+            logging.info(f"Erro ao verificar modal: {e}")
             time.sleep(0.5)
 
 
@@ -24,12 +24,12 @@ def close_seller(page):
         try:
             modal_visible = page.query_selector("header.sc-60baa1a1-0.iranfm")
             if modal_visible:
-                print("Modal detectado! Clicando no botão 'Manter aberto'.")
+                logging.info("Modal detectado! Clicando no botão 'Manter aberto'.")
                 page.click("button.sc-60baa1a1-4.kcgrGw")
                 break
             time.sleep(0.5)
         except Exception as e:
-            print(f"Erro ao verificar modal: {e}")
+            logging.info(f"Erro ao verificar modal: {e}")
             time.sleep(0.5)
 
 
@@ -39,17 +39,17 @@ def registered_payments(page, timeout: int = 2):
         try:
             elapsed_time = time.time() - start_time
             if elapsed_time > timeout:
-                print("Tempo limite atingido; o modal não foi detectado.")
+                logging.info("Tempo limite atingido; o modal não foi detectado.")
                 break
 
             modal_visible = page.query_selector('h1:has-text("Pagamentos registrados")')
             if modal_visible:
-                print("Modal detectado! Clicando no botão 'Manter aberto'.")
+                logging.info("Modal detectado! Clicando no botão 'Manter aberto'.")
                 page.click('button:has-text("Ok, entendi")')
                 break
             time.sleep(0.5)
         except Exception as e:
-            print(f"Erro ao verificar modal: {e}")
+            logging.info(f"Erro ao verificar modal: {e}")
             time.sleep(0.5)
 
 

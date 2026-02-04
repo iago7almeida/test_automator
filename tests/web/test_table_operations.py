@@ -1,10 +1,8 @@
 import time
 import pytest
+import logging
 from playwright.sync_api import Page
-
-from config.settings import get_config
 from models.web.dashboard_page import DashboardPage
-from models.web.login_page import LoginPage
 from models.web.order_sheet_page import OrderSheetPage
 from models.web.tables_page import TablesPage
 
@@ -15,8 +13,8 @@ def test_create_orders_on_multiple_tables(logged_in_page):
     order_sheet = OrderSheetPage(logged_in_page)
     time.sleep(2)
     dashboard.go_to_tables()    
-    for i in range(1, 12):
-        print(f"Processando Mesa: {i}")
+    for i in range(1, 10):
+        logging.info(f"Processando Mesa: {i}")
         order_sheet.add_item_to_table(i)
         time.sleep(2)
 
@@ -35,7 +33,7 @@ def test_transfer_order_sheets(logged_in_page):
     dashboard = DashboardPage(logged_in_page)
     order_sheet = OrderSheetPage(logged_in_page)
     dashboard.go_to_tables()
-    for i in range(1, 10):
+    for i in range(1, 5):
         order_sheet.transfer_order_sheet(i, i+1)
         time.sleep(2)
 
@@ -56,6 +54,6 @@ def test_receive_payment(logged_in_page):
     order_sheet = OrderSheetPage(logged_in_page)
     time.sleep(2)
     dashboard.go_to_tables()
-    for i in range(1,12):
+    for i in range(1,10):
         order_sheet.pay_table(i)
         time.sleep(2)

@@ -1,3 +1,4 @@
+import logging
 from playwright.sync_api import Page, expect
 from models.web.base_page import BasePage
 from models.web.payment_page import PaymentPage
@@ -28,12 +29,12 @@ class PaymentModal(BasePage):
 
 
     def select_payment_method(self, method: str):
-        print(f"💳 Selecionando Aba: {method}")
+        logging.info(f"💳 Selecionando Aba: {method}")
 
         try:
             expect(self.modal_content).to_be_visible(timeout=10000)
         except AssertionError:
-            print("ERRO: Modal não abriu a tempo.")
+            logging.info("ERRO: Modal não abriu a tempo.")
             raise
         if method.lower() == "dinheiro":
             self.btn_money.click()
@@ -48,7 +49,7 @@ class PaymentModal(BasePage):
             raise ValueError(f"Método de pagamento não reconhecido: {method}")
 
     def fill_amount(self, amount: str):
-        print(f"✍️ Digitando valor: {amount}")
+        logging.info(f"✍️ Digitando valor: {amount}")
         self.input_value.click()
         self.input_value.press("ControlOrMeta+a")
         self.page.wait_for_timeout(100)
@@ -58,12 +59,12 @@ class PaymentModal(BasePage):
         try:
             self.btn_launch.wait_for(state="visible", timeout=6000)
         except:
-            print("⚠️ Botão 'Lançar' não foi encontrado.")
+            logging.info("⚠️ Botão 'Lançar' não foi encontrado.")
             return
         if self.btn_launch.is_disabled():
-            print("✅ O valor já está pago (Botão Lançar inativo). Pulando etapa...")
+            logging.info("✅ O valor já está pago (Botão Lançar inativo). Pulando etapa...")
             return
-        print("🚀 Clicando Lançar")
+        logging.info("🚀 Clicando Lançar")
         self.btn_launch.click()
         self.page.wait_for_timeout(5000)
 
@@ -72,17 +73,17 @@ class PaymentModal(BasePage):
         return self.missing_amount_text.inner_text().replace("Falta pagar", "").replace("\xa0", " ").strip()
 
     def finalize_order_sheet(self):
-        print("Finalizando conta...")
+        logging.info("Finalizando conta...")
         expect(self.btn_finalize).to_be_enabled(timeout=15000)
-        print(self.btn_finalize.is_visible())
+        logging.info(self.btn_finalize.is_visible())
         self.btn_finalize.click()
 
     def confirm_payment(self):
         payment_page = PaymentPage(self.page)
-        print("Ciicando em confirmar/enviar...")
+        logging.info("Ciicando em confirmar/enviar...")
         self.btn_confirm.click()
         payment_page.handle_fiscal_note_modal_if_appears()
         self.modal_content.wait_for(state="hidden", timeout=10000)
 
     def remove_staged_payment(self):
-        print("Aqui na remoção")
+        logging.info("Aqui na remoção")

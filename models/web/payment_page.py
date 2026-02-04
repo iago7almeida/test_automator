@@ -1,5 +1,5 @@
+import logging
 from time import sleep
-
 from playwright.sync_api import Page, expect
 
 
@@ -14,11 +14,11 @@ class PaymentPage:
         payment_button = self.page.get_by_role("button", name=method, exact=True)
         expect(payment_button).to_be_visible()
         payment_button.click()
-        print("Concluí payment_method")
+        logging.info("Concluí payment_method")
 
     def select_other_sub_method(self, sub_method):
-        print(f"Tentando selecionar sub-método: {sub_method}")
-    
+        logging.info(f"Tentando selecionar sub-método: {sub_method}")
+
         target_option = self.page.get_by_text(sub_method, exact=True)
         if target_option.is_visible():
             target_option.click()
@@ -46,16 +46,16 @@ class PaymentPage:
         try:
             expect(insertion_fee_button).to_be_visible(timeout=5000)
             insertion_fee_button.click()
-        
+
         except Exception:
-            print("Modal não apareceu ou foi comprometido")
+            logging.info("Modal não apareceu ou foi comprometido")
 
     def handle_fiscal_note_modal_if_appears(self):
         close_modal_button = self.page.get_by_role("button", name="Não emitir")
 
         try:
             expect(close_modal_button).to_be_visible(timeout=5000)
-            print("Modal de nota fiscal encontrado. Fechando...")
+            logging.info("Modal de nota fiscal encontrado. Fechando...")
             close_modal_button.click()
         except Exception:
-            print("Modal de nota fiscal não apareceu. Continuando...")
+            logging.info("Modal de nota fiscal não apareceu. Continuando...")

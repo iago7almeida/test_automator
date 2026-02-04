@@ -1,4 +1,5 @@
 import re
+import logging
 from playwright.sync_api import Page, expect
 from models.web.base_page import BasePage
 
@@ -24,10 +25,10 @@ class OrderManagementPage(BasePage):
             order_id = match.group() if match else None
             
             if order_id:
-                print(f"🔍 Pedido encontrado com status '{status_text}': {order_id}")
+                logging.info(f"🔍 Pedido encontrado com status '{status_text}': {order_id}")
                 return order_id
         
-        print(f"⚠️ Nenhum pedido encontrado com status: {status_text}")
+        logging.info(f"⚠️ Nenhum pedido encontrado com status: {status_text}")
         return None
 
     def open_first_unpaid_order(self):
@@ -38,14 +39,14 @@ class OrderManagementPage(BasePage):
             match = re.search(r'\d{6}', row_text) 
             order_id = match.group() if match else "ID_DESCONHECIDO"
             
-            print(f"🔍 Abrindo pagamento do pedido ID: {order_id}")
+            logging.info(f"🔍 Abrindo pagamento do pedido ID: {order_id}")
             unpaid_row.get_by_text("Não pago", exact=True).click()
             return order_id
         
         return None
     
     def change_order_status(self, order_id: str, current_status: str, new_status: str):
-        print(f"🔄 Mudando status {order_id}: [{current_status}] ➔ [{new_status}]")
+        logging.info(f"🔄 Mudando status {order_id}: [{current_status}] ➔ [{new_status}]")
         
         row = self.order_rows.filter(has_text=order_id)
         status_btn = row.locator("button, div").filter(has_text=current_status).filter(has=self.page.locator("visible=true")).last
@@ -61,10 +62,10 @@ class OrderManagementPage(BasePage):
         row = self.order_rows.filter(has_text=order_id)
         status_recebido = row.get_by_text("Recebido").filter(has=self.page.locator("visible=true"))   
         expect(status_recebido).to_be_visible()
-        print(f"✅ Pedido {order_id} confirmado como PAGO.")
+        logging.info(f"✅ Pedido {order_id} confirmado como PAGO.")
 
     def verify_status_order(self, order_id: str, expected_status: str):
-        print(f"🔎 Verificando status esperado: {expected_status}")
+        logging.info(f"🔎 Verificando status esperado: {expected_status}")
         row = self.order_rows.filter(has_text=order_id)
         status_badge = row.get_by_text(expected_status, exact=False)
         expect(status_badge).to_be_visible()
