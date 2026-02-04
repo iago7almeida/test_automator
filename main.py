@@ -61,7 +61,7 @@ async def run_tests():
             if os.path.exists("allure-report"):
                 allure_process = subprocess.Popen(
                     ["npx", "allure", "open", "allure-report", "--port", "8080"],
-                    stderr = DEVNULL,
+                    stdout = DEVNULL,
                     start_new_session=True
                 )
                 logger.info(f"[{datetime.now()}] ✅ Servidor Allure iniciado com sucesso http://localhost:8080/")
