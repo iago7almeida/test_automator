@@ -1,13 +1,15 @@
 import asyncio
+from asyncio.subprocess import DEVNULL
 import logging
 import subprocess
 import os
 import shutil
+import signal
 from datetime import datetime
 from subprocess import Popen
 from typing import Optional
 
-INTERVALO = 30 * 60  # 30 minutos
+INTERVALO = 5 * 60  # 30 minutos
 
 allure_process: Optional[Popen] = None
 
@@ -32,7 +34,9 @@ async def run_tests():
                 "tests/web/test_single_orders.py",
                 "tests/web/test_order_management.py",
                 "tests/web/test_table_operations.py",
-                "--alluredir=allure-results"
+                "--alluredir=allure-results",
+                "--reruns",
+                "2"
             ]
         )
 
@@ -51,13 +55,16 @@ async def run_tests():
 
             if allure_process and allure_process.poll() is None :
                 logger.info("Encerrando servidor Allure antigo...")
-                allure_process.terminate()
+                os.killpg(os.getpgid(allure_process.pid), signal.SIGTERM)
                 allure_process.wait()
 
             if os.path.exists("allure-report"):
                 allure_process = subprocess.Popen(
-                    ["npx", "allure", "open", "allure-report", "--port", "8080"]
+                    ["npx", "allure", "open", "allure-report", "--port", "8080"],
+                    stderr = DEVNULL,
+                    start_new_session=True
                 )
+                logger.info(f"[{datetime.now()}] ✅ Servidor Allure iniciado com sucesso http://localhost:8080/")
 
         logger.info(f"[{datetime.now()}] Testes finalizados com sucesso ✅")
 
