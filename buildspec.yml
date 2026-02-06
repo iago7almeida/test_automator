@@ -28,10 +28,10 @@ phases:
       # Bloco de decisão: Se o código for diferente de 0, falha o build manualmente
       - |
         if [ $TEST_EXIT_CODE -ne 0 ]; then
-          echo "FALHA CRÍTICA: Testes não passaram. Bloqueando o pipeline."
+          echo "FALHA CRÍTICA Testes não passaram. Bloqueando o pipeline."
           exit $TEST_EXIT_CODE
         else
-          echo "SUCESSO: Todos os testes passaram."
+          echo "SUCESSO Todos os testes passaram."
         fi
 
 post_build:
