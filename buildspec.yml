@@ -23,7 +23,7 @@ phases:
         -v ; \
         TEST_EXIT_CODE=$?
       
-      - echo "Os testes terminaram. Código de saída: $TEST_EXIT_CODE"
+      - echo "Os testes terminaram. Código de saída $TEST_EXIT_CODE"
 
       # Bloco de decisão: Se o código for diferente de 0, falha o build manualmente
       - |
