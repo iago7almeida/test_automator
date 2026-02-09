@@ -27,7 +27,7 @@ phases:
       
       - echo "Os testes terminaram. Código de saída $TEST_EXIT_CODE"
 
-      # Bloco de decisão: Se o código for diferente de 0, falha o build manualmente
+      
       - |
         if [ $TEST_EXIT_CODE -ne 0 ]; then
           echo "FALHA CRÍTICA Testes não passaram. Bloqueando o pipeline."
