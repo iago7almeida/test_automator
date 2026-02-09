@@ -25,6 +25,9 @@ phases:
       
       - echo "Os testes terminaram. Código de saída $TEST_EXIT_CODE"
 
+      - echo "Gerando relatório Allure..."
+      - allure generate allure-results -o allure-report --clean
+
       
       - |
         if [ $TEST_EXIT_CODE -ne 0 ]; then
@@ -33,11 +36,6 @@ phases:
         else
           echo "SUCESSO Todos os testes passaram."
         fi
-
-post_build:
-    commands:
-      - echo "Fase de build encerrada. Preparando artefatos..."
-      - allure generate allure-results -o allure-report --clean
 
 artifacts:
   files:
