@@ -20,8 +20,6 @@ phases:
         tests/web/test_order_management.py \
         tests/web/test_table_operations.py \
         --alluredir=allure-results \
-        --html=reports/index.html \
-        --self-contained-html \
         -v ; \
         TEST_EXIT_CODE=$?
       
