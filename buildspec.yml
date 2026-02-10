@@ -28,6 +28,8 @@ phases:
       - echo "Gerando relatório Allure..."
       - allure generate allure-results -o allure-report --clean
 
+      - echo "Publicando no S3..."
+      - aws s3 sync allure-report/ s3://relatorios-testes-qa-playwright-2026 --delete
       
       - |
         if [ $TEST_EXIT_CODE -ne 0 ]; then
@@ -36,9 +38,3 @@ phases:
         else
           echo "SUCESSO Todos os testes passaram."
         fi
-
-artifacts:
-  files:
-    - '**/*'
-  base-directory: allure-report
-  name: relatorio-$(date +%Y-%m-%d)
