@@ -176,6 +176,23 @@ Ver `requirements.txt` para lista completa.
 
 **Mais problemas?** Veja [docs/04-best-practices.md](docs/04-best-practices.md#troubleshooting)
 
+# 🚀 Automação de Testes E2E com Pipeline CI/CD Serverless (AWS)
+
+Este repositório contém a suite de testes automatizados E2E (End-to-End) desenvolvida com **Python** e **Playwright**. O diferencial deste projeto é a sua integração completa com um pipeline de CI/CD **100% Serverless** na AWS, garantindo execução agendada, relatórios públicos e monitorização automática.
+
+## 🏗️ Arquitetura do Pipeline
+
+O projeto não roda apenas localmente. Foi construída uma arquitetura na nuvem para garantir a qualidade contínua:
+
+```mermaid
+graph LR
+    A[EventBridge Scheduler] -->|Gatilho Diário 08:00| B[AWS CodeBuild]
+    B -->|Executa Testes| C[Playwright]
+    C -->|Gera Relatório| D[Allure Report]
+    D -->|Deploy Site Estático| E[Amazon S3]
+    B -->|Notifica Status| F[Amazon SNS]
+    F -->|Email Alerta| G[QA Engineer]
+
 ## 🚀 Próximos Passos
 
 1. **Setup**: Siga [00-venv-setup.md](docs/00-venv-setup.md)
